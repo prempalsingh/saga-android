@@ -10,5 +10,10 @@
 
     </style>
 
+    <style name="myCustomTheme" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textColorSecondary">#FFFFFF</item>
+    </style>
+
 
 </resources>
