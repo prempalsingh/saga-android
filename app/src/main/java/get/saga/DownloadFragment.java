@@ -13,13 +13,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.io.BufferedReader;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by prempal on 16/2/15.
@@ -53,37 +59,27 @@ public class DownloadFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
             String input = mInput.getText().toString();
-            BufferedReader reader = null;
             DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httppost = new HttpPost("http://getsa.ga/request.php");
 
-            try
-            {
-                URL url = new URL("http://getsa.ga/response.php");
-                URLConnection urlConnection = url.openConnection();
-                urlConnection.setDoOutput(true);
-                OutputStreamWriter streamWriter = new OutputStreamWriter(urlConnection.getOutputStream());
-                streamWriter.write(input);
-                streamWriter.flush();
+            try {
 
-                // Get the server response
-                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String response = reader.readLine();
-                Log.d("Response",response);
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair("track", input));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+                ResponseHandler<String> responseHandler = new BasicResponseHandler();
+                String response = httpclient.execute(httppost, responseHandler);
+                Log.d("Response", response);
                 Uri uri = Uri.parse(response);
                 DownloadManager.Request dr = new DownloadManager.Request(uri);
                 dMgr.enqueue(dr);
 
-            } catch (MalformedURLException e) {
+            } catch (ClientProtocolException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try{
-                    if(reader!=null)
-                        reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
 
             return null;
