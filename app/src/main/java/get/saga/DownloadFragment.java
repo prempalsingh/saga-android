@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,9 +79,13 @@ public class DownloadFragment extends Fragment {
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 String response = httpclient.execute(httppost, responseHandler);
                 Log.d("Response", response);
-                Uri uri = Uri.parse(response);
-                DownloadManager.Request dr = new DownloadManager.Request(uri);
-                dMgr.enqueue(dr);
+                if(Patterns.WEB_URL.matcher(response).matches()){
+                    Uri uri = Uri.parse(response);
+                    DownloadManager.Request dr = new DownloadManager.Request(uri);
+                    dMgr.enqueue(dr);
+                }
+                else
+                    Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT);
 
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
