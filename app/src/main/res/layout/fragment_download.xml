@@ -16,6 +16,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:hint="Type song name"
+        android:imeOptions="actionDone"
         android:gravity="center"
         android:layout_marginBottom="86dp"
         android:layout_above="@+id/btn_download"

@@ -9,11 +9,14 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -46,18 +49,31 @@ public class DownloadFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_download, container, false);
         mInput = (EditText) rootView.findViewById(R.id.et_input);
+        mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i== EditorInfo.IME_ACTION_DONE){
+                    startDownload();
+                }
+                return false;
+            }
+        });
         Button downloadBtn = (Button) rootView.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(TextUtils.isEmpty(mInput.getText()))
-                    Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
-                else
-                    new PostQuery().execute();
+                startDownload();
             }
         });
 
         return rootView;
+    }
+
+    private void startDownload(){
+        if(TextUtils.isEmpty(mInput.getText()))
+            Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
+        else
+            new PostQuery().execute();
     }
 
     private class PostQuery extends AsyncTask<Void,Void,Void> {
@@ -82,6 +98,7 @@ public class DownloadFragment extends Fragment {
                     Uri uri = Uri.parse(response);
                     DownloadManager.Request dr = new DownloadManager.Request(uri);
                     dMgr.enqueue(dr);
+                    Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
                 }
                 else
                     Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT);
