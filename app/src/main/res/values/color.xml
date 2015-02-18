@@ -4,7 +4,7 @@
     <!-- App Main colors -->
     <color name="colorPrimary">#607D8B</color>
     <color name="colorPrimaryDark">#455A64</color>
-
+    <color name="tabsScrollColor">#ff08708a</color>
     <color name="white">#FFFFFF</color>
 
 </resources>

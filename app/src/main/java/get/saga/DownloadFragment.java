@@ -44,7 +44,7 @@ public class DownloadFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_download, container, false);
         mInput = (EditText) rootView.findViewById(R.id.et_input);
         Button downloadBtn = (Button) rootView.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
