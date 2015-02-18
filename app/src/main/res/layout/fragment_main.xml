@@ -1,6 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
@@ -8,35 +7,21 @@
     tools:context=".DownloadFragment">
 
     <TextView android:text="Get Saga" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="wrap_content" />
 
-    <get.saga.ui.BootstrapEditText
-        android:id="@+id/et_input"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:hint="Type song name"
-        bootstrapbutton:be_roundedCorners="true"
-        android:gravity="center"
-        android:layout_marginBottom="86dp"
-        android:layout_above="@+id/btn_download"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <get.saga.ui.BootstrapButton
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="true"
-        android:text="Download"
-        bootstrapbutton:bb_icon_right="fa-download"
-        bootstrapbutton:bb_roundedCorners="true"
-        bootstrapbutton:bb_type="primary"
-        android:layout_marginBottom="194dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/btn_download" />
+        android:id="@+id/et_input"
+        android:layout_gravity="center"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/btn_download"
+        android:layout_gravity="bottom" />
 
 
-</RelativeLayout>
+</LinearLayout>

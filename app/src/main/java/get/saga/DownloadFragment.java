@@ -12,6 +12,8 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
@@ -28,15 +30,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import get.saga.ui.BootstrapButton;
-import get.saga.ui.BootstrapEditText;
-
 /**
  * Created by prempal on 16/2/15.
  */
 public class DownloadFragment extends Fragment {
 
-    BootstrapEditText mInput;
+    EditText mInput;
 
     public DownloadFragment(){
 
@@ -46,8 +45,8 @@ public class DownloadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        mInput = (BootstrapEditText) rootView.findViewById(R.id.et_input);
-        BootstrapButton downloadBtn = (BootstrapButton) rootView.findViewById(R.id.btn_download);
+        mInput = (EditText) rootView.findViewById(R.id.et_input);
+        Button downloadBtn = (Button) rootView.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
