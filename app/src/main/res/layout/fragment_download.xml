@@ -18,6 +18,7 @@
         android:hint="Type song name"
         android:imeOptions="actionDone"
         android:gravity="center"
+        android:singleLine="true"
         android:layout_marginBottom="86dp"
         android:layout_above="@+id/btn_download"
         android:layout_alignParentLeft="true"
