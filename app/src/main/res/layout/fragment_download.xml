@@ -24,8 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_gravity="center"
-        android:layout_margin="6dp"
-        android:elevation="10dp"
         card_view:cardBackgroundColor="@color/white"
         card_view:cardCornerRadius="1dp">
 
@@ -37,7 +35,7 @@
             android:weightSum="4">
 
             <ImageButton
-                android:id="@+id/searchblahblah"
+                android:id="@+id/search"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:layout_weight="1"
@@ -55,17 +53,27 @@
                 android:hint="Type song name"
                 android:imeOptions="actionDone"
                 android:paddingRight="60dp"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:layout_weight="2"/>
+            <ImageButton
+                android:id="@+id/btn_download"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_action_download" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
+    <!-- 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center">
 
-        <Button
+       <Button
             android:id="@+id/btn_download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,4 +86,5 @@
             android:text="Download"
             android:textColor="@color/colorAccent" />
     </LinearLayout>
+    -->
 </LinearLayout>

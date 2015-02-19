@@ -14,8 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +58,7 @@ public class DownloadFragment extends Fragment {
                 return false;
             }
         });
-        Button downloadBtn = (Button) rootView.findViewById(R.id.btn_download);
+        ImageButton downloadBtn = (ImageButton) rootView.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

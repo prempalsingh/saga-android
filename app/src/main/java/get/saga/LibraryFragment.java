@@ -88,4 +88,5 @@ public class LibraryFragment extends Fragment {
             this.title = (TextView) view.findViewById(R.id.title);
         }
     }
+
 }
