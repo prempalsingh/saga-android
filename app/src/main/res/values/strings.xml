@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Get Saga</string>
+    <string name="app_name">Saga</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="Placeholder_library">You haven\'t downloaded any song yet!!</string>
