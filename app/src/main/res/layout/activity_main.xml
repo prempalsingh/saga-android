@@ -1,32 +1,59 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-tools:context=".MainActivity">
-
-<android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
-    app:theme="@style/myCustomTheme" />
-
-<get.saga.SlidingTabLayout
-    android:id="@+id/tabs"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="2dp"
-    android:background="@color/colorPrimary"/>
-
-<android.support.v4.view.ViewPager
-    android:id="@+id/pager"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    android:layout_weight="1">
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/myCustomTheme">
+    <!--
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center">
+        
+        <ImageView
+            android:id="@+id/timageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:scaleType="centerCrop"
+            android:src="@drawable/untitled"
+            android:layout_marginRight="1dp"/>
+        <TextView
+        android:id="@+id/ttextview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Saga"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:gravity="center|center_horizontal|center_vertical"
+        />
+        </LinearLayout>
+        -->
+        
+        </android.support.v7.widget.Toolbar>
+
+    <get.saga.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
     </android.support.v4.view.ViewPager>
-
 
 
 </LinearLayout>

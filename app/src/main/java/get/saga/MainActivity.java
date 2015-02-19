@@ -31,6 +31,11 @@ public class MainActivity extends ActionBarActivity {
                 setSupportActionBar(mToolbar);
                 mToolbar.setTitle(title);
                 mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
+                //getSupportActionBar().setDisplayShowTitleEnabled(false);
+                //ImageView toolbarImageView = (ImageView) mToolbar.findViewById(R.id.timageview);
+                //TextView toolbarTextView = (TextView) mToolbar.findViewById(R.id.ttextview);
+                //toolbarImageView.setImageResource(R.drawable.untitled);
+                //toolbarTextView.setText("Saga");
             }
         }
 
@@ -42,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
+                return getResources().getColor(R.color.colorAccent);
             }
         });
         tabs.setViewPager(pager);
