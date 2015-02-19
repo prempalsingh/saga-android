@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -33,12 +32,12 @@ public class LibraryFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        for (int i = 0; i < 3; i++) {
+        /*for (int i = 0; i < 3; i++) {
 
             SongInfo song = new SongInfo();
             song.setTitle("Song " + i);
             songList.add(song);
-        }
+        }*/
 
         mAdapter = new LibraryAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -74,17 +73,15 @@ public class LibraryFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return 3;
+            return songList.size();
         }
     }
 
     public class SongViewHolder extends RecyclerView.ViewHolder {
-        protected ImageView play;
         protected TextView title;
 
         public SongViewHolder(View view) {
             super(view);
-            this.play = (ImageView) view.findViewById(R.id.icon);
             this.title = (TextView) view.findViewById(R.id.title);
         }
     }
