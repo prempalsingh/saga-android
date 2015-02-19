@@ -8,5 +8,6 @@
     <color name="white">#FFFFFF</color>
     <color name="colorAccent">#009688</color>
     <color name="tabTextColor">#ff08708a</color>
+    <color name="textSearchGrey">#BDBDBD</color>
 
 </resources>
