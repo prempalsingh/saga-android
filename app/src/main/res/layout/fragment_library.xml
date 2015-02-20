@@ -10,13 +10,14 @@
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:scrollbars="vertical"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="4"
+        android:id="@+id/emptyList"
+        android:visibility="gone"
         android:orientation="vertical"
         android:weightSum="3">
 
