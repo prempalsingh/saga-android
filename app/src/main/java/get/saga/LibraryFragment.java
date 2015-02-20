@@ -34,7 +34,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getSongList();
+        getSongList();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class LibraryFragment extends Fragment {
         String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
         Log.d("dir", dirPath);
         String selection = MediaStore.Audio.Media.DATA +" like ?";
-        String[] selectionArgs={dirPath+"/%"};
+        String[] selectionArgs={dirPath+"/saga/%"};
         ContentResolver musicResolver = getActivity().getContentResolver();
         Cursor musicCursor = musicResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

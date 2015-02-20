@@ -119,6 +119,7 @@ public class DownloadFragment extends Fragment {
                 Uri uri = Uri.parse(response);
                 DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                 DownloadManager.Request dr = new DownloadManager.Request(uri);
+                dr.setDestinationInExternalPublicDir("/saga/", uri.getQueryParameter("mp3"));
                 dMgr.enqueue(dr);
                 Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
             }

@@ -1,6 +1,7 @@
 package get.saga;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -9,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.io.File;
 
 import get.saga.ui.SlidingTabLayout;
 
@@ -25,6 +28,10 @@ public class MainActivity extends ActionBarActivity {
         SlidingTabLayout tabs;
 
         super.onCreate(savedInstanceState);
+        File folder = new File(Environment.getExternalStorageDirectory() + "/saga");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
         setContentView(R.layout.activity_main);
         String title = "Saga - Free Music";
         if (mToolbar == null) {
