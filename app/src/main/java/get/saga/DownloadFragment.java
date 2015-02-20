@@ -123,7 +123,7 @@ public class DownloadFragment extends Fragment {
                 Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
             }
             else
-                Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT);
+                Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
         }
     }
 }
