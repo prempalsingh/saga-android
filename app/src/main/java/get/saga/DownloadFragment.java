@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import java.util.List;
 public class DownloadFragment extends Fragment {
 
     EditText mInput;
+    ProgressBar mProgress;
 
     public DownloadFragment(){
 
@@ -48,6 +50,7 @@ public class DownloadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_download, container, false);
+        mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mInput = (EditText) rootView.findViewById(R.id.et_input);
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -76,12 +79,16 @@ public class DownloadFragment extends Fragment {
             new PostQuery().execute();
     }
 
-    private class PostQuery extends AsyncTask<Void,Void,Void> {
+    private class PostQuery extends AsyncTask<Void,Void,String> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected void onPreExecute() {
+            mProgress.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
             String input = mInput.getText().toString();
-            DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost("http://getsa.ga/request.php");
 
@@ -94,14 +101,7 @@ public class DownloadFragment extends Fragment {
                 ResponseHandler<String> responseHandler = new BasicResponseHandler();
                 String response = httpclient.execute(httppost, responseHandler);
                 Log.d("Response", response);
-                if(Patterns.WEB_URL.matcher(response).matches()){
-                    Uri uri = Uri.parse(response);
-                    DownloadManager.Request dr = new DownloadManager.Request(uri);
-                    dMgr.enqueue(dr);
-                    Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
-                }
-                else
-                    Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT);
+                return response;
 
             } catch (ClientProtocolException e) {
                 e.printStackTrace();
@@ -110,6 +110,20 @@ public class DownloadFragment extends Fragment {
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            mProgress.setVisibility(View.GONE);
+            if(Patterns.WEB_URL.matcher(response).matches()){
+                Uri uri = Uri.parse(response);
+                DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                DownloadManager.Request dr = new DownloadManager.Request(uri);
+                dMgr.enqueue(dr);
+                Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT);
         }
     }
 }

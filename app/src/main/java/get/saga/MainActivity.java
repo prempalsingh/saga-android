@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String title = getString(R.string.app_name);
+        String title = "Saga - Free Music";
         if (mToolbar == null) {
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             if (mToolbar != null) {
@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity {
 
     public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-        CharSequence TAB_TITLES[]={"Download","Library"};
+        CharSequence TAB_TITLES[]={"DOWNLOAD","LIBRARY"};
         int NUM_TAB =2;
 
         public ViewPagerAdapter(FragmentManager fm) {
