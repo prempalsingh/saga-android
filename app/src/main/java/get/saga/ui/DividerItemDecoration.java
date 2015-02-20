@@ -1,4 +1,4 @@
-package get.saga;
+package get.saga.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package get.saga;
+package get.saga.ui;
 
 import android.R;
 import android.content.Context;

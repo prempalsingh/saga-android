@@ -40,7 +40,7 @@
         
         </android.support.v7.widget.Toolbar>
 
-    <get.saga.SlidingTabLayout
+    <get.saga.ui.SlidingTabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

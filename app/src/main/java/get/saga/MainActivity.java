@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import get.saga.ui.SlidingTabLayout;
+
 
 public class MainActivity extends ActionBarActivity {
 

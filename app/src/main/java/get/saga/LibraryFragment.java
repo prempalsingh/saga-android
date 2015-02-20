@@ -13,6 +13,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import get.saga.ui.DividerItemDecoration;
+
 /**
  * Created by prempal on 19/2/15.
  */
