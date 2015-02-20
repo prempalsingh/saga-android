@@ -1,10 +1,15 @@
 package get.saga;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +31,12 @@ public class LibraryFragment extends Fragment {
     private List<SongInfo> songList = new ArrayList<>();
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //getSongList();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_library, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
@@ -34,28 +45,49 @@ public class LibraryFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        /*for (int i = 0; i < 3; i++) {
-
-            SongInfo song = new SongInfo();
-            song.setTitle("Song " + i);
-            songList.add(song);
-        }*/
-
         mAdapter = new LibraryAdapter();
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
     }
 
+    public void getSongList() {
+        String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
+        Log.d("dir", dirPath);
+        String selection = MediaStore.Audio.Media.DATA +" like ?";
+        String[] selectionArgs={dirPath+"/%"};
+        ContentResolver musicResolver = getActivity().getContentResolver();
+        Cursor musicCursor = musicResolver.query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                selection,
+                selectionArgs,
+                MediaStore.Audio.Media.TITLE + " ASC");
+        if(musicCursor!=null && musicCursor.moveToFirst()){
+            int titleColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media._ID);
+            do {
+                long id = musicCursor.getLong(idColumn);
+                String title = musicCursor.getString(titleColumn);
+                songList.add(new SongInfo(id, title));
+            }
+            while (musicCursor.moveToNext());
+        }
+    }
+
     public class SongInfo {
-        private String title;
 
-        public String getTitle() {
-            return title;
+        private String mTitle;
+        private long mId;
+
+        public SongInfo(long id,String title){
+            mId = id;
+            mTitle = title;
         }
 
-        public void setTitle(String title) {
-            this.title = title;
-        }
+        public long getID(){return mId;}
+        public String getTitle(){return mTitle;}
     }
 
     public class LibraryAdapter extends RecyclerView.Adapter<SongViewHolder>{
