@@ -75,6 +75,8 @@ public class DownloadFragment extends Fragment {
     private void startDownload(){
         if(TextUtils.isEmpty(mInput.getText()))
             Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
+        else if(mInput.getText().toString()=="whomadeyou")
+            Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
         else
             new PostQuery().execute();
     }
