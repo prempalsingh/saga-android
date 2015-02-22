@@ -123,7 +123,7 @@ public class DownloadFragment extends Fragment {
                 DownloadManager.Request dr = new DownloadManager.Request(uri);
                 dr.setDestinationInExternalPublicDir("/saga/", uri.getQueryParameter("mp3"));
                 dMgr.enqueue(dr);
-                Toast.makeText(getActivity(),"Download started",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
             }
             else
                 Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
