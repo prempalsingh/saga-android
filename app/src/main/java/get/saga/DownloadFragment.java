@@ -73,12 +73,18 @@ public class DownloadFragment extends Fragment {
     }
 
     private void startDownload(){
-        if(TextUtils.isEmpty(mInput.getText()))
-            Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
-        else if(mInput.getText().toString().equalsIgnoreCase("whomadeyou"))
-            Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
+        if(Utils.isNetworkAvailable(getActivity()))
+        {
+            if(TextUtils.isEmpty(mInput.getText()))
+                Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
+            else if(mInput.getText().toString().equalsIgnoreCase("whomadeyou"))
+                Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
+            else
+                new PostQuery().execute();
+        }
         else
-            new PostQuery().execute();
+            Toast.makeText(getActivity(),"Trouble connecting to the Internet",Toast.LENGTH_SHORT).show();
+
     }
 
     private class PostQuery extends AsyncTask<Void,Void,String> {
