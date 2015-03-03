@@ -3,7 +3,6 @@ package get.saga;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -25,18 +24,13 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +39,9 @@ import java.util.Map;
  */
 public class DownloadFragment extends Fragment {
 
-    EditText mInput;
-    ProgressBar mProgress;
+    private EditText mInput;
+    private ProgressBar mProgress;
+    private RequestQueue mQueue;
     private static final String TAG = "DownloadFragment";
 
     public DownloadFragment(){
@@ -80,13 +75,13 @@ public class DownloadFragment extends Fragment {
                     startDownload();
             }
         });
-        //new GetCharts().execute();
+        mQueue = Volley.newRequestQueue(getActivity());
+        getCharts();
 
         return rootView;
     }
 
     private void startDownload(){
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
         mProgress.setVisibility(View.VISIBLE);
         final String input = mInput.getText().toString();
         String url = "http://getsa.ga/request.php";
@@ -124,66 +119,31 @@ public class DownloadFragment extends Fragment {
                 return params;
             }
         };
-        queue.add(request);
+        mQueue.add(request);
     }
 
-    private class GetCharts extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            URL url = null;
-            String jsonStr = null;
-            BufferedReader reader = null;
-            try {
-                url = new URL("http://boundbytech.com/saga/get_charts.php");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder result = new StringBuilder();
-                String inputLine = "";
-                while ((inputLine = reader.readLine()) != null) {
-                    result.append(inputLine);
-                }
-                jsonStr = result.toString();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try{
-                if(reader!=null)
-                    reader.close();
-                } catch (IOException e) {
-                e.printStackTrace();
-                }
-            }
-            Log.d("Response: ", "> " + jsonStr);
-            if (jsonStr != null) {
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonStr);
-
-                    for(int i=0; i<jsonArray.length(); i++){
-                        JSONArray chart = jsonArray.getJSONArray(i);
-                        Log.d("Chart",chart.toString());
+    private void getCharts(){
+        String url = "http://boundbytech.com/saga/get_charts.php";
+        JsonArrayRequest request = new JsonArrayRequest(url,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for(int i=0; i<response.length(); i++){
+                            JSONArray chart = null;
+                            try {
+                                chart = response.getJSONArray(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            Log.d("Chart",chart.toString());
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e("Charts", "Couldn't get any data from the url");
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-        }
-
+        });
+        mQueue.add(request);
     }
 }
