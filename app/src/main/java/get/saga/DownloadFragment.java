@@ -3,9 +3,11 @@ package get.saga;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.LruCache;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +30,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -51,6 +54,7 @@ public class DownloadFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RequestQueue mQueue;
+    private ImageLoader mImageLoader;
 
     public DownloadFragment(){
 
@@ -156,6 +160,21 @@ public class DownloadFragment extends Fragment {
             }
         });
         mQueue.add(request);
+        mImageLoader = new ImageLoader(mQueue,
+                new ImageLoader.ImageCache() {
+                    private final LruCache<String, Bitmap>
+                            cache = new LruCache<String, Bitmap>(100);
+
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return cache.get(url);
+                    }
+
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        cache.put(url, bitmap);
+                    }
+                });
     }
 
     private class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {
@@ -175,13 +194,20 @@ public class DownloadFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+            String songName = null;
+            String artistName = null;
             try {
-                viewHolder.songName.setText(mDataset.getJSONArray(i).getString(0));
-                viewHolder.artistName.setText(mDataset.getJSONArray(i).getString(1));
+                songName = mDataset.getJSONArray(i).getString(0);
+                artistName = mDataset.getJSONArray(i).getString(1);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            viewHolder.songName.setText(songName);
+            viewHolder.artistName.setText(artistName);
+            viewHolder.albumArt.setDefaultImageResId(R.drawable.music);
+            String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "album+art";
+            Log.d("jdf",url);
+            viewHolder.albumArt.setImageUrl(url, mImageLoader);
         }
 
         @Override
@@ -192,7 +218,7 @@ public class DownloadFragment extends Fragment {
         public class ViewHolder extends RecyclerView.ViewHolder {
             TextView songName;
             TextView artistName;
-            ImageView albumArt;
+            NetworkImageView albumArt;
 
             public ViewHolder(CardView v) {
                 super(v);
@@ -204,7 +230,7 @@ public class DownloadFragment extends Fragment {
                 });
                 this.songName = (TextView) v.findViewById(R.id.song);
                 this.artistName = (TextView) v.findViewById(R.id.artist);
-                this.albumArt = (ImageView) v.findViewById(R.id.album_art);
+                this.albumArt = (NetworkImageView) v.findViewById(R.id.album_art);
             }
         }
     }
