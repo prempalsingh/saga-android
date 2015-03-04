@@ -75,7 +75,7 @@ public class DownloadFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if(i== EditorInfo.IME_ACTION_DONE){
-                    startDownload();
+                    startDownload(textView.getText().toString());
                 }
                 return false;
             }
@@ -84,7 +84,7 @@ public class DownloadFragment extends Fragment {
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    startDownload();
+                    startDownload(mInput.getText().toString());
             }
         });
         mQueue = Volley.newRequestQueue(getActivity());
@@ -93,14 +93,13 @@ public class DownloadFragment extends Fragment {
         return rootView;
     }
 
-    private void startDownload(){
-        if(TextUtils.isEmpty(mInput.getText()))
+    private void startDownload(final String input){
+        if(TextUtils.isEmpty(input))
             Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
-        else if(mInput.getText().toString().equalsIgnoreCase("whomadeyou"))
+        else if(input.equalsIgnoreCase("whomadeyou"))
             Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
         else{
             mProgress.setVisibility(View.VISIBLE);
-            final String input = mInput.getText().toString();
             String url = "http://getsa.ga/request.php";
             StringRequest request = new StringRequest(Request.Method.POST,
                     url, new Response.Listener<String>() {
@@ -197,6 +196,12 @@ public class DownloadFragment extends Fragment {
 
             public ViewHolder(CardView v) {
                 super(v);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startDownload(songName.toString() + artistName.toString());
+                    }
+                });
                 this.songName = (TextView) v.findViewById(R.id.song);
                 this.artistName = (TextView) v.findViewById(R.id.artist);
                 this.albumArt = (ImageView) v.findViewById(R.id.album_art);
