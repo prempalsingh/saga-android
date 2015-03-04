@@ -5,6 +5,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,10 +43,13 @@ import java.util.Map;
  */
 public class DownloadFragment extends Fragment {
 
+    private static final String TAG = "DownloadFragment";
+
     private EditText mInput;
     private ProgressBar mProgress;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
     private RequestQueue mQueue;
-    private static final String TAG = "DownloadFragment";
 
     public DownloadFragment(){
 
@@ -52,6 +59,9 @@ public class DownloadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_download, container, false);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.grid_view);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        mRecyclerView.setLayoutManager(layoutManager);
         mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mInput = (EditText) rootView.findViewById(R.id.et_input);
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -67,11 +77,6 @@ public class DownloadFragment extends Fragment {
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(TextUtils.isEmpty(mInput.getText()))
-                    Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
-                else if(mInput.getText().toString().equalsIgnoreCase("whomadeyou"))
-                    Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
-                else
                     startDownload();
             }
         });
@@ -82,44 +87,51 @@ public class DownloadFragment extends Fragment {
     }
 
     private void startDownload(){
-        mProgress.setVisibility(View.VISIBLE);
-        final String input = mInput.getText().toString();
-        String url = "http://getsa.ga/request.php";
-        StringRequest request = new StringRequest(Request.Method.POST,
-                url, new Response.Listener<String>() {
+        if(TextUtils.isEmpty(mInput.getText()))
+            Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
+        else if(mInput.getText().toString().equalsIgnoreCase("whomadeyou"))
+            Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
+        else{
+            mProgress.setVisibility(View.VISIBLE);
+            final String input = mInput.getText().toString();
+            String url = "http://getsa.ga/request.php";
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    url, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, response.toString());
-                mProgress.setVisibility(View.GONE);
-                if(Patterns.WEB_URL.matcher(response).matches()){
-                    Uri uri = Uri.parse(response);
-                    DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                    DownloadManager.Request dr = new DownloadManager.Request(uri);
-                    dr.setDestinationInExternalPublicDir("/saga/", uri.getQueryParameter("mp3"));
-                    dMgr.enqueue(dr);
-                    Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
+                @Override
+                public void onResponse(String response) {
+                    Log.d(TAG, response);
+                    mProgress.setVisibility(View.GONE);
+                    if(Patterns.WEB_URL.matcher(response).matches()){
+                        Uri uri = Uri.parse(response);
+                        DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                        DownloadManager.Request dr = new DownloadManager.Request(uri);
+                        dr.setDestinationInExternalPublicDir("/saga/", uri.getQueryParameter("mp3"));
+                        dMgr.enqueue(dr);
+                        Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                        Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
                 }
-                else
-                    Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
-            }
-        }, new Response.ErrorListener() {
+            }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getActivity(),"Error connecting to the Internet",Toast.LENGTH_SHORT).show();
-                mProgress.setVisibility(View.GONE);
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("track", input);
-                return params;
-            }
-        };
-        mQueue.add(request);
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.d(TAG, "Error: " + error.getMessage());
+                    Toast.makeText(getActivity(),"Error connecting to the Internet",Toast.LENGTH_SHORT).show();
+                    mProgress.setVisibility(View.GONE);
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("track", input);
+                    return params;
+                }
+            };
+            mQueue.add(request);
+        }
+
     }
 
     private void getCharts(){
@@ -128,15 +140,8 @@ public class DownloadFragment extends Fragment {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        for(int i=0; i<response.length(); i++){
-                            JSONArray chart = null;
-                            try {
-                                chart = response.getJSONArray(i);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            Log.d("Chart",chart.toString());
-                        }
+                        mAdapter = new ChartsAdapter(response);
+                        mRecyclerView.setAdapter(mAdapter);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -145,5 +150,50 @@ public class DownloadFragment extends Fragment {
             }
         });
         mQueue.add(request);
+    }
+
+    private class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {
+
+        private JSONArray mDataset;
+
+        public ChartsAdapter(JSONArray dataSet) {
+            mDataset = dataSet;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            CardView v = (CardView) LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.grid_chart, viewGroup, false);
+            return new ViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
+            try {
+                viewHolder.songName.setText(mDataset.getJSONArray(i).getString(0));
+                viewHolder.artistName.setText(mDataset.getJSONArray(i).getString(1));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return mDataset.length();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            TextView songName;
+            TextView artistName;
+            ImageView albumArt;
+
+            public ViewHolder(CardView v) {
+                super(v);
+                this.songName = (TextView) v.findViewById(R.id.song);
+                this.artistName = (TextView) v.findViewById(R.id.artist);
+                this.albumArt = (ImageView) v.findViewById(R.id.album_art);
+            }
+        }
     }
 }
