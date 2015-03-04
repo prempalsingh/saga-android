@@ -123,7 +123,7 @@ public class LibraryFragment extends Fragment {
 
         public SongViewHolder(View view) {
             super(view);
-            this.title = (TextView) view.findViewById(R.id.title);
+            this.title = (TextView) view.findViewById(R.id.songNameListView);
         }
     }
 
