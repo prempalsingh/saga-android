@@ -16,7 +16,6 @@
 package com.android.volley.toolbox;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
@@ -65,7 +64,7 @@ public class NetworkImageView extends ImageView {
     public interface ResponseObserver
     {
         public void onError();
-        public void onSuccess(Bitmap bitmap);
+        public void onSuccess();
     }
 
     private ResponseObserver mObserver;
@@ -192,14 +191,14 @@ public class NetworkImageView extends ImageView {
 
                         if (response.getBitmap() != null) {
                             setImageBitmap(response.getBitmap());
+                            if(mObserver!=null)
+                            {
+                                mObserver.onSuccess();
+                            }
                         } else if (mDefaultImageId != 0) {
                             setImageResource(mDefaultImageId);
                         }
 
-                        if(mObserver!=null)
-                        {
-                            mObserver.onSuccess(response.getBitmap());
-                        }
                     }
                 }, maxWidth, maxHeight, scaleType);
 

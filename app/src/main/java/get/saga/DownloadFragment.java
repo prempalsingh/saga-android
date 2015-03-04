@@ -4,10 +4,12 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LruCache;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -214,8 +216,15 @@ public class DownloadFragment extends Fragment {
                 }
 
                 @Override
-                public void onSuccess(Bitmap bitmap) {
-                    //set colors here
+                public void onSuccess() {
+                    Bitmap bitmap = ((BitmapDrawable)viewHolder.albumArt.getDrawable()).getBitmap();
+                    Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                        public void onGenerated(Palette palette) {
+                            viewHolder.songInfo.setBackgroundColor(palette.getLightVibrantColor(R.color.white));
+                            viewHolder.songName.setTextColor(palette.getDarkVibrantColor(R.color.white));
+                            viewHolder.artistName.setTextColor(palette.getDarkVibrantColor(R.color.white));
+                        }
+                    });
                 }
             });
         }
