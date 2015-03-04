@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LruCache;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -187,7 +187,7 @@ public class DownloadFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            CardView v = (CardView) LayoutInflater.from(viewGroup.getContext())
+            LinearLayout v = (LinearLayout) LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.grid_chart, viewGroup, false);
             return new ViewHolder(v);
         }
@@ -204,10 +204,20 @@ public class DownloadFragment extends Fragment {
             }
             viewHolder.songName.setText(songName);
             viewHolder.artistName.setText(artistName);
-            viewHolder.albumArt.setDefaultImageResId(R.drawable.music);
             String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "album+art";
             Log.d("jdf",url);
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
+            viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
+                @Override
+                public void onError() {
+
+                }
+
+                @Override
+                public void onSuccess(Bitmap bitmap) {
+                    //set colors here
+                }
+            });
         }
 
         @Override
@@ -219,8 +229,9 @@ public class DownloadFragment extends Fragment {
             TextView songName;
             TextView artistName;
             NetworkImageView albumArt;
+            LinearLayout songInfo;
 
-            public ViewHolder(CardView v) {
+            public ViewHolder(LinearLayout v) {
                 super(v);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -231,6 +242,7 @@ public class DownloadFragment extends Fragment {
                 this.songName = (TextView) v.findViewById(R.id.song);
                 this.artistName = (TextView) v.findViewById(R.id.artist);
                 this.albumArt = (NetworkImageView) v.findViewById(R.id.album_art);
+                this.songInfo = (LinearLayout) v.findViewById(R.id.songInfo);
             }
         }
     }

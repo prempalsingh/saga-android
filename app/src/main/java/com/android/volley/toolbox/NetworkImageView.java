@@ -16,6 +16,7 @@
 package com.android.volley.toolbox;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
@@ -59,6 +60,18 @@ public class NetworkImageView extends ImageView {
 
     public NetworkImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public interface ResponseObserver
+    {
+        public void onError();
+        public void onSuccess(Bitmap bitmap);
+    }
+
+    private ResponseObserver mObserver;
+
+    public void setResponseObserver(ResponseObserver observer) {
+        mObserver = observer;
     }
 
     /**
@@ -154,6 +167,11 @@ public class NetworkImageView extends ImageView {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }
+
+                        if(mObserver!=null)
+                        {
+                            mObserver.onError();
+                        }
                     }
 
                     @Override
@@ -176,6 +194,11 @@ public class NetworkImageView extends ImageView {
                             setImageBitmap(response.getBitmap());
                         } else if (mDefaultImageId != 0) {
                             setImageResource(mDefaultImageId);
+                        }
+
+                        if(mObserver!=null)
+                        {
+                            mObserver.onSuccess(response.getBitmap());
                         }
                     }
                 }, maxWidth, maxHeight, scaleType);
