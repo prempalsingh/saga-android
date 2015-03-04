@@ -2,6 +2,7 @@ package get.saga;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -60,8 +61,14 @@ public class DownloadFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_download, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.grid_view);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        mRecyclerView.setLayoutManager(layoutManager);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+            mRecyclerView.setLayoutManager(layoutManager);
+        }else {
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+            mRecyclerView.setLayoutManager(layoutManager);
+        }
+
         mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
         mInput = (EditText) rootView.findViewById(R.id.et_input);
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
