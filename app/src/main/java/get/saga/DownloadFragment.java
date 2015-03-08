@@ -198,7 +198,6 @@ public class DownloadFragment extends Fragment {
             viewHolder.songName.setText(songName);
             viewHolder.artistName.setText(artistName);
             String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "album+art";
-            Log.d("jdf",url);
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
             viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
                 @Override
@@ -211,9 +210,16 @@ public class DownloadFragment extends Fragment {
                     Bitmap bitmap = ((BitmapDrawable)viewHolder.albumArt.getDrawable()).getBitmap();
                     Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
                         public void onGenerated(Palette palette) {
-                            viewHolder.songInfo.setBackgroundColor(palette.getLightVibrantColor(R.color.white));
-                            viewHolder.songName.setTextColor(palette.getDarkVibrantColor(R.color.white));
-                            viewHolder.artistName.setTextColor(palette.getDarkVibrantColor(R.color.white));
+                            int bgColor = palette.getVibrantColor(R.color.white);
+                            viewHolder.songInfo.setBackgroundColor(bgColor);
+                            if(Utils.isColorDark(bgColor)){
+                                viewHolder.songName.setTextColor(getResources().getColor(R.color.white));
+                                viewHolder.artistName.setTextColor(getResources().getColor(R.color.white));
+                            }
+                            else{
+                                viewHolder.songName.setTextColor(getResources().getColor(R.color.black));
+                                viewHolder.artistName.setTextColor(getResources().getColor(R.color.black));
+                            }
                         }
                     });
                 }
