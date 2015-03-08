@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="6"
-    tools:context=".DownloadFragment"
-    android:background="@android:color/black">
+    tools:context=".DownloadFragment">
 
     <!--
     <TextView android:text="Get Saga" android:layout_width="wrap_content"
