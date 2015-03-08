@@ -66,7 +66,7 @@ public class DiskLruImageCache implements ImageCache  {
 
         DiskLruCache.Editor editor = null;
         try {
-            editor = mDiskCache.edit( key );
+            editor = mDiskCache.edit(String.valueOf(key.hashCode()));
             if ( editor == null ) {
                 return;
             }
@@ -104,7 +104,7 @@ public class DiskLruImageCache implements ImageCache  {
         DiskLruCache.Snapshot snapshot = null;
         try {
 
-            snapshot = mDiskCache.get( key );
+            snapshot = mDiskCache.get(String.valueOf(key.hashCode()));
             if ( snapshot == null ) {
                 return null;
             }
@@ -129,43 +129,4 @@ public class DiskLruImageCache implements ImageCache  {
         return bitmap;
 
     }
-
-    public boolean containsKey( String key ) {
-
-        boolean contained = false;
-        DiskLruCache.Snapshot snapshot = null;
-        try {
-            snapshot = mDiskCache.get( key );
-            contained = snapshot != null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if ( snapshot != null ) {
-                snapshot.close();
-            }
-        }
-
-        return contained;
-
-    }
-
-    public void clearCache() {
-        if ( BuildConfig.DEBUG ) {
-            Log.d( "cache_test_DISK_", "disk cache CLEARED");
-        }
-        try {
-            mDiskCache.delete();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
-    }
-
-    public File getCacheFolder() {
-        return mDiskCache.getDirectory();
-    }
-
-
-
-
-
 }
