@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.LruCache;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -147,6 +146,7 @@ public class DownloadFragment extends Fragment {
     }
 
     private void getCharts(){
+
         String url = "http://boundbytech.com/saga/get_charts.php";
         JsonArrayRequest request = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -162,21 +162,12 @@ public class DownloadFragment extends Fragment {
             }
         });
         mQueue.add(request);
-        mImageLoader = new ImageLoader(mQueue,
-                new ImageLoader.ImageCache() {
-                    private final LruCache<String, Bitmap>
-                            cache = new LruCache<String, Bitmap>(100);
-
-                    @Override
-                    public Bitmap getBitmap(String url) {
-                        return cache.get(url);
-                    }
-
-                    @Override
-                    public void putBitmap(String url, Bitmap bitmap) {
-                        cache.put(url, bitmap);
-                    }
-                });
+        mImageLoader = new ImageLoader(mQueue,new DiskLruImageCache(getActivity(),
+                getActivity().getPackageCodePath()
+                , 1024*1024*30
+                , Bitmap.CompressFormat.PNG
+                , 100)
+        );
     }
 
     private class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {

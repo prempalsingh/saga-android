@@ -41,9 +41,9 @@ public class HttpHeaderParser {
 
         Map<String, String> headers = response.headers;
 
-        long serverDate = 0;
+        long serverDate = 1425686400;
         long lastModified = 0;
-        long serverExpires = 0;
+        long serverExpires = 1999947617;
         long softExpire = 0;
         long finalExpire = 0;
         long maxAge = 0;
@@ -53,7 +53,7 @@ public class HttpHeaderParser {
         String serverEtag = null;
         String headerValue;
 
-        headerValue = headers.get("Date");
+        /*headerValue = headers.get("Date");
         if (headerValue != null) {
             serverDate = parseDateAsEpoch(headerValue);
         }
@@ -85,7 +85,7 @@ public class HttpHeaderParser {
         headerValue = headers.get("Expires");
         if (headerValue != null) {
             serverExpires = parseDateAsEpoch(headerValue);
-        }
+        }*/
 
         headerValue = headers.get("Last-Modified");
         if (headerValue != null) {
