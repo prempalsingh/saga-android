@@ -1,5 +1,6 @@
 package get.saga;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -32,6 +33,14 @@ public class MainActivity extends ActionBarActivity {
         if (!folder.exists()) {
             folder.mkdir();
         }
+
+        try {
+            int versionCode = getPackageManager()
+                    .getPackageInfo(getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
         setContentView(R.layout.activity_main);
         String title = "Saga - Free Music";
         if (mToolbar == null) {

@@ -35,7 +35,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,7 +91,9 @@ public class DownloadFragment extends Fragment {
                     startDownload(mInput.getText().toString());
             }
         });
-        mQueue = Volley.newRequestQueue(getActivity());
+        mQueue = VolleySingleton.getInstance(getActivity()).
+                getRequestQueue();
+//        mQueue = Volley.newRequestQueue(getActivity());
         getCharts();
 
         return rootView;
@@ -151,17 +152,7 @@ public class DownloadFragment extends Fragment {
 
     private void getCharts(){
 
-        mImageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
-            @Override
-            public Bitmap getBitmap(String url) {
-                return null;
-            }
-
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-
-            }
-        });
+        mImageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
 
 //        mImageLoader = new ImageLoader(mQueue,new DiskLruImageCache(getActivity(),
 //                getActivity().getPackageCodePath()
