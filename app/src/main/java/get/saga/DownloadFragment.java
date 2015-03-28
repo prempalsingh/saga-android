@@ -99,6 +99,7 @@ public class DownloadFragment extends Fragment {
     }
 
     private void startDownload(final String input){
+        Log.d("htd",input);
         if(TextUtils.isEmpty(input))
             Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
         else if(input.equalsIgnoreCase("whomadeyou"))
@@ -140,6 +141,7 @@ public class DownloadFragment extends Fragment {
                     return params;
                 }
             };
+            request.setShouldCache(false);
             mQueue.add(request);
         }
 
@@ -147,6 +149,24 @@ public class DownloadFragment extends Fragment {
 
     private void getCharts(){
 
+        mImageLoader = new ImageLoader(mQueue, new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String url) {
+                return null;
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+
+            }
+        });
+
+//        mImageLoader = new ImageLoader(mQueue,new DiskLruImageCache(getActivity(),
+//                getActivity().getPackageCodePath()
+//                , 1024*1024*30
+//                , Bitmap.CompressFormat.PNG
+//                , 100)
+//        );
         String url = "http://boundbytech.com/saga/get_charts.php";
         JsonArrayRequest request = new JsonArrayRequest(url,
                 new Response.Listener<JSONArray>() {
@@ -154,20 +174,17 @@ public class DownloadFragment extends Fragment {
                     public void onResponse(JSONArray response) {
                         mAdapter = new ChartsAdapter(response);
                         mRecyclerView.setAdapter(mAdapter);
+                        mProgress.setVisibility(View.GONE);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
+                mProgress.setVisibility(View.GONE);
             }
         });
         mQueue.add(request);
-        mImageLoader = new ImageLoader(mQueue,new DiskLruImageCache(getActivity(),
-                getActivity().getPackageCodePath()
-                , 1024*1024*30
-                , Bitmap.CompressFormat.PNG
-                , 100)
-        );
+
     }
 
     private class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {
@@ -197,7 +214,7 @@ public class DownloadFragment extends Fragment {
             }
             viewHolder.songName.setText(songName);
             viewHolder.artistName.setText(artistName);
-            String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "album+art";
+            String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "+album+art";
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
             viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
                 @Override
@@ -242,7 +259,7 @@ public class DownloadFragment extends Fragment {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        startDownload(songName.toString() + artistName.toString());
+                        startDownload(songName.getText().toString());
                     }
                 });
                 this.songName = (TextView) v.findViewById(R.id.song);

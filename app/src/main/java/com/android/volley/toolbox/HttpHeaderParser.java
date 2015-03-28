@@ -41,19 +41,20 @@ public class HttpHeaderParser {
 
         Map<String, String> headers = response.headers;
 
-        long serverDate = 1425686400;
+        long serverDate = 0;
         long lastModified = 0;
-        long serverExpires = 1999947617;
+        long serverExpires = 0;
         long softExpire = 0;
         long finalExpire = 0;
         long maxAge = 0;
         long staleWhileRevalidate = 0;
         boolean hasCacheControl = false;
+        boolean mustRevalidate = false;
 
         String serverEtag = null;
         String headerValue;
 
-        /*headerValue = headers.get("Date");
+        headerValue = headers.get("Date");
         if (headerValue != null) {
             serverDate = parseDateAsEpoch(headerValue);
         }
@@ -77,7 +78,7 @@ public class HttpHeaderParser {
                     } catch (Exception e) {
                     }
                 } else if (token.equals("must-revalidate") || token.equals("proxy-revalidate")) {
-                    maxAge = 0;
+                    mustRevalidate = true;
                 }
             }
         }
@@ -85,7 +86,7 @@ public class HttpHeaderParser {
         headerValue = headers.get("Expires");
         if (headerValue != null) {
             serverExpires = parseDateAsEpoch(headerValue);
-        }*/
+        }
 
         headerValue = headers.get("Last-Modified");
         if (headerValue != null) {
@@ -98,7 +99,9 @@ public class HttpHeaderParser {
         // is more restrictive.
         if (hasCacheControl) {
             softExpire = now + maxAge * 1000;
-            finalExpire = softExpire + staleWhileRevalidate * 1000;
+            finalExpire = mustRevalidate
+                    ? softExpire
+                    : softExpire + staleWhileRevalidate * 1000;
         } else if (serverDate > 0 && serverExpires >= serverDate) {
             // Default semantic for Expire header in HTTP specification is softExpire.
             softExpire = now + (serverExpires - serverDate);
