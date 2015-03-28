@@ -118,7 +118,9 @@ public class DownloadFragment extends Fragment {
                         Uri uri = Uri.parse(response);
                         DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                         DownloadManager.Request dr = new DownloadManager.Request(uri);
-                        dr.setDestinationInExternalPublicDir("/saga/", uri.getQueryParameter("mp3"));
+                        String filename = uri.getQueryParameter("mp3").replace("_"," ");
+                        dr.setTitle(filename);
+                        dr.setDestinationInExternalPublicDir("/saga/", filename);
                         dMgr.enqueue(dr);
                         Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
                     }
@@ -259,7 +261,7 @@ public class DownloadFragment extends Fragment {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        startDownload(songName.getText().toString());
+                        startDownload(songName.getText().toString() + " " + artistName.getText().toString());
                     }
                 });
                 this.songName = (TextView) v.findViewById(R.id.song);
