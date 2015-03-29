@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
@@ -44,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,6 +108,8 @@ public class DownloadFragment extends Fragment {
             }
         });
 
+        getCharts();
+
         try {
             mVersionCode = getActivity().getPackageManager()
                     .getPackageInfo(getActivity().getPackageName(), 0).versionCode;
@@ -118,11 +122,9 @@ public class DownloadFragment extends Fragment {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, updateUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("sdfsd", String.valueOf(response));
                 try {
                     int updateVersionCode = response.getInt("versionCode");
                     if (updateVersionCode > mVersionCode && mVersionCode!=0){
-                        Log.d("sdfdsdf","aa raha hai");
                         mAPKUrl = response.getString("apkUrl");
                         mChangelog = response.getString("changelog");
                         AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -131,6 +133,16 @@ public class DownloadFragment extends Fragment {
                                 .setPositiveButton("Update now", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        File myFile = new File(Environment.getExternalStorageDirectory() + "/saga/" + "update.apk");
+                                        if (myFile.exists())
+                                            myFile.delete();
+                                        Uri uri = Uri.parse(mAPKUrl);
+                                        DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                                        DownloadManager.Request dr = new DownloadManager.Request(uri);
+                                        String filename = "update.apk";
+                                        dr.setTitle("Saga - Free Music Update");
+                                        dr.setDestinationInExternalPublicDir("/saga/", filename);
+                                        dMgr.enqueue(dr);
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -154,9 +166,6 @@ public class DownloadFragment extends Fragment {
             }
         });
         mQueue.add(request);
-//        mQueue = Volley.newRequestQueue(getActivity());
-        getCharts();
-
         return rootView;
     }
 
