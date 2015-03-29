@@ -40,6 +40,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +67,7 @@ public class DownloadFragment extends Fragment {
     int mVersionCode = 0;
     String mChangelog = null;
     String mAPKUrl = null;
+    Tracker mTracker;
 
     public DownloadFragment(){
 
@@ -81,6 +84,8 @@ public class DownloadFragment extends Fragment {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+        mTracker = ((ApplicationWrapper) getActivity().getApplication()).getTracker(
+                ApplicationWrapper.TrackerName.APP_TRACKER);
     }
 
     @Override
@@ -193,6 +198,10 @@ public class DownloadFragment extends Fragment {
                         dr.setDestinationInExternalPublicDir("/saga/", filename);
                         dMgr.enqueue(dr);
                         Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
+                        mTracker.send(new HitBuilders.EventBuilder()
+                                .setCategory("Music Download")
+                                .setAction("Click")
+                                .build());
                     }
                     else
                         Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
