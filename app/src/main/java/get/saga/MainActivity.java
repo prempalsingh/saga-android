@@ -11,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.File;
 
 import get.saga.ui.SlidingTabLayout;
@@ -22,16 +25,29 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         ViewPager pager;
         ViewPagerAdapter adapter;
         SlidingTabLayout tabs;
 
-        super.onCreate(savedInstanceState);
         File folder = new File(Environment.getExternalStorageDirectory() + "/saga");
         if (!folder.exists()) {
             folder.mkdir();
         }
+
+        try{
+            // Get tracker.
+            Tracker t = ((ApplicationWrapper) getApplication()).getTracker(
+                    ApplicationWrapper.TrackerName.APP_TRACKER);
+            // Set screen name.
+            t.setScreenName("MainActivity");
+            // Send a screen view.
+            t.send(new HitBuilders.ScreenViewBuilder().build());
+        }catch(Exception e){
+            //just as a protective measure
+        }
+
 
         setContentView(R.layout.activity_main);
         String title = "Saga - Free Music";
@@ -63,6 +79,10 @@ public class MainActivity extends ActionBarActivity {
         tabs.setViewPager(pager);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
