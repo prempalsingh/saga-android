@@ -73,7 +73,14 @@ public class DownloadFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mQueue = VolleySingleton.getInstance(getActivity()).
+                getRequestQueue();
+        try {
+            mVersionCode = getActivity().getPackageManager()
+                    .getPackageInfo(getActivity().getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -110,14 +117,6 @@ public class DownloadFragment extends Fragment {
 
         getCharts();
 
-        try {
-            mVersionCode = getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        mQueue = VolleySingleton.getInstance(getActivity()).
-                getRequestQueue();
         String updateUrl = "https://www.dropbox.com/s/bka9o3p43oki217/saga.json?raw=1";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, updateUrl, null, new Response.Listener<JSONObject>() {
             @Override
