@@ -1,7 +1,10 @@
 package get.saga;
 
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,11 +36,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,8 +60,17 @@ public class DownloadFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
+    int mVersionCode = 0;
+    String mChangelog = null;
+    String mAPKUrl = null;
 
     public DownloadFragment(){
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
     }
 
@@ -91,8 +105,55 @@ public class DownloadFragment extends Fragment {
                     startDownload(mInput.getText().toString());
             }
         });
+
+        try {
+            mVersionCode = getActivity().getPackageManager()
+                    .getPackageInfo(getActivity().getPackageName(), 0).versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         mQueue = VolleySingleton.getInstance(getActivity()).
                 getRequestQueue();
+        String updateUrl = "https://www.dropbox.com/s/bka9o3p43oki217/saga.json?raw=1";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, updateUrl, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("sdfsd", String.valueOf(response));
+                try {
+                    int updateVersionCode = response.getInt("versionCode");
+                    if (updateVersionCode > mVersionCode && mVersionCode!=0){
+                        Log.d("sdfdsdf","aa raha hai");
+                        mAPKUrl = response.getString("apkUrl");
+                        mChangelog = response.getString("changelog");
+                        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                                .setTitle("New update available!")
+                                .setMessage(mChangelog)
+                                .setPositiveButton("Update now", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                })
+                                .setCancelable(false)
+                                .create();
+                        dialog.show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("sd", error.toString());
+            }
+        });
+        mQueue.add(request);
 //        mQueue = Volley.newRequestQueue(getActivity());
         getCharts();
 
