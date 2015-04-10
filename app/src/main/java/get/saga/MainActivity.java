@@ -1,5 +1,7 @@
 package get.saga;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -99,7 +102,28 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_feedback) {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("message/rfc822");
+            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"prempal.42@gmail.com"});
+            i.putExtra(Intent.EXTRA_SUBJECT, "Saga Feedback");
+            i.putExtra(Intent.EXTRA_TEXT   , "Model - " + Build.MODEL + "\nVersion - " + Build.VERSION.RELEASE
+                                                + "\n_ _ _ _ _ _ _ _ _ _ _ _ _\n");
+            try {
+                startActivity(Intent.createChooser(i, "Choose email client..."));
+            } catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else if(id == R.id.action_invite) {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing app. Saga - Free Music. \nhttp://getsa.ga/apk ");
+            try {
+                startActivity(Intent.createChooser(i, "Choose..."));
+            } catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(this, "No application available to invite friends.", Toast.LENGTH_SHORT).show();
+            }
             return true;
         }
 
