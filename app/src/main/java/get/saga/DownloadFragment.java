@@ -284,7 +284,9 @@ public class DownloadFragment extends Fragment {
                 e.printStackTrace();
             }
             viewHolder.songName.setText(songName);
+            viewHolder.songName.setSelected(true);
             viewHolder.artistName.setText(artistName);
+            viewHolder.artistName.setSelected(true);
             String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "+album+art";
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
             viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
