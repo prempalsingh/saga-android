@@ -1,9 +1,6 @@
 package get.saga;
 
-import android.app.ActivityManager;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -56,12 +53,13 @@ public class MainActivity extends ActionBarActivity {
 
 
         setContentView(R.layout.activity_main);
-        String title = "Saga - Free Music";
+        String title = " Saga";
         if (mToolbar == null) {
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             if (mToolbar != null) {
                 setSupportActionBar(mToolbar);
                 getSupportActionBar().setTitle(title);
+                mToolbar.setLogo(R.drawable.ic_launcher);
                 mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
                 //getSupportActionBar().setDisplayShowTitleEnabled(false);
                 //ImageView toolbarImageView = (ImageView) mToolbar.findViewById(R.id.timageview);
@@ -69,11 +67,6 @@ public class MainActivity extends ActionBarActivity {
                 //toolbarImageView.setImageResource(R.drawable.untitled);
                 //toolbarTextView.setText("Saga");
             }
-        }
-        if (android.os.Build.VERSION.SDK_INT>=21){
-            ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription("Saga - Free Music", BitmapFactory.decodeResource(getResources(),
-                    R.drawable.saga_white), Color.parseColor("#00BCD4"));
-            setTaskDescription(taskDesc);
         }
 
         adapter =  new ViewPagerAdapter(getSupportFragmentManager());
@@ -126,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
         else if(id == R.id.action_invite) {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing app. Saga - Free Music. \nhttp://getsa.ga/apk ");
+            i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing app - Saga. \nhttp://getsa.ga/apk ");
             try {
                 startActivity(Intent.createChooser(i, "Choose..."));
             } catch (android.content.ActivityNotFoundException ex) {
