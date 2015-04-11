@@ -9,6 +9,11 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagOptionSingleton;
+
 import java.io.File;
 
 /**
@@ -36,6 +41,17 @@ public class DownloadReceiver extends BroadcastReceiver {
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                  install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(install);
+                }
+                else{
+                    try{
+                        TagOptionSingleton.getInstance().setAndroid(true);
+                        AudioFile f = AudioFileIO.read(new File(Environment.getExternalStorageDirectory() + "/Saga/" + title));
+                        Tag tag = f.getTag();
+                        Log.d("Receiver",tag.toString());
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
