@@ -34,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         ViewPagerAdapter adapter;
         SlidingTabLayout tabs;
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "/saga");
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Saga");
         if (!folder.exists()) {
             folder.mkdir();
         }

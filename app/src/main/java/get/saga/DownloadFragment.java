@@ -137,7 +137,7 @@ public class DownloadFragment extends Fragment {
                                 .setPositiveButton("Update now", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        File myFile = new File(Environment.getExternalStorageDirectory() + "/saga/" + "update.apk");
+                                        File myFile = new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk");
                                         if (myFile.exists())
                                             myFile.delete();
                                         Uri uri = Uri.parse(mAPKUrl);
@@ -145,7 +145,7 @@ public class DownloadFragment extends Fragment {
                                         DownloadManager.Request dr = new DownloadManager.Request(uri);
                                         String filename = "update.apk";
                                         dr.setTitle("Saga - Free Music Update");
-                                        dr.setDestinationInExternalPublicDir("/saga/", filename);
+                                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
                                         dMgr.enqueue(dr);
                                     }
                                 })
@@ -195,7 +195,7 @@ public class DownloadFragment extends Fragment {
                         DownloadManager.Request dr = new DownloadManager.Request(uri);
                         String filename = uri.getQueryParameter("mp3").replace("_"," ");
                         dr.setTitle(filename);
-                        dr.setDestinationInExternalPublicDir("/saga/", filename);
+                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
                         dMgr.enqueue(dr);
                         Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
                         mTracker.send(new HitBuilders.EventBuilder()

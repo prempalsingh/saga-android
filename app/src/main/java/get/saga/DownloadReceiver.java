@@ -32,7 +32,7 @@ public class DownloadReceiver extends BroadcastReceiver {
                 Log.d("Receiver", "Title:" + title);
                 if(title.equalsIgnoreCase("Saga - Free Music Update")){
                     Intent install = new Intent(Intent.ACTION_VIEW);
-                    install.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/saga/" + "update.apk")), "application/vnd.android.package-archive");
+                    install.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk")), "application/vnd.android.package-archive");
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                  install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(install);
