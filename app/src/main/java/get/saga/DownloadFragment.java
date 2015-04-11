@@ -169,6 +169,7 @@ public class DownloadFragment extends Fragment {
                 Log.d("sd", error.toString());
             }
         });
+        request.setShouldCache(false);
         mQueue.add(request);
         return rootView;
     }
