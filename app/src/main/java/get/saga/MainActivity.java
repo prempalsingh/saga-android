@@ -1,6 +1,9 @@
 package get.saga;
 
+import android.app.ActivityManager;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -66,6 +69,11 @@ public class MainActivity extends ActionBarActivity {
                 //toolbarImageView.setImageResource(R.drawable.untitled);
                 //toolbarTextView.setText("Saga");
             }
+        }
+        if (android.os.Build.VERSION.SDK_INT>=21){
+            ActivityManager.TaskDescription taskDesc = new ActivityManager.TaskDescription("Saga - Free Music", BitmapFactory.decodeResource(getResources(),
+                    R.drawable.saga_white), Color.parseColor("#00BCD4"));
+            setTaskDescription(taskDesc);
         }
 
         adapter =  new ViewPagerAdapter(getSupportFragmentManager());
