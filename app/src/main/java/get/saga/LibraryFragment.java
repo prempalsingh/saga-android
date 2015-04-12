@@ -1,9 +1,14 @@
 package get.saga;
 
+import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,11 +36,24 @@ public class LibraryFragment extends Fragment {
     private LibraryAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<SongInfo> songList = new ArrayList<>();
+    private MusicService musicSrv;
+    private Intent playIntent;
+    private boolean musicBound=false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSongList();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(playIntent==null){
+            playIntent = new Intent(getActivity(), MusicService.class);
+            getActivity().bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            getActivity().startService(playIntent);
+        }
     }
 
     @Override
@@ -56,6 +75,25 @@ public class LibraryFragment extends Fragment {
 
         return rootView;
     }
+
+    //connect to the service
+    private ServiceConnection musicConnection = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicSrv.setList((ArrayList<SongInfo>) songList);
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
 
     public void getSongList() {
         String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -83,10 +121,18 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        getActivity().stopService(playIntent);
+        musicSrv=null;
+        super.onDestroy();
+    }
+
     public class SongInfo {
 
         private String mTitle;
         private long mId;
+        private String mDuration;
 
         public SongInfo(long id,String title){
             mId = id;
@@ -107,9 +153,17 @@ public class LibraryFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(SongViewHolder holder, int i) {
+        public void onBindViewHolder(final SongViewHolder holder, final int i) {
             SongInfo song = songList.get(i);
             holder.title.setText(song.getTitle());
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    musicSrv.setSong(i);
+                    musicSrv.playSong();
+                    holder.play.setImageResource(android.R.drawable.ic_media_pause);
+                }
+            });
         }
 
         @Override
@@ -120,10 +174,14 @@ public class LibraryFragment extends Fragment {
 
     public class SongViewHolder extends RecyclerView.ViewHolder {
         protected TextView title;
+        protected View view;
+        protected ImageView play;
 
         public SongViewHolder(View view) {
             super(view);
+            this.view = view;
             this.title = (TextView) view.findViewById(R.id.songNameListView);
+            this.play = (ImageView) view.findViewById(R.id.playButtonListView);
         }
     }
 
