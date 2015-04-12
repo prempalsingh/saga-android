@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -315,6 +316,57 @@ public class DownloadFragment extends Fragment {
                     });
                 }
             });
+            final String finalSongName = songName;
+            final String finalArtistName = artistName;
+            viewHolder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startDownload(finalSongName + " " + finalArtistName);
+                }
+            });
+            viewHolder.view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mProgress.setVisibility(View.VISIBLE);
+                    String url = "http://rhythmsa.ga/api/sharable.php?q=";
+                    url = url + finalSongName.replace(" ","+") + "+" + finalArtistName.replace(" ","+");
+                    StringRequest request = new StringRequest(Request.Method.GET,
+                            url, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            mProgress.setVisibility(View.GONE);
+                            Log.d(TAG, response);
+                            if(Patterns.WEB_URL.matcher(response).matches()){
+                                Intent i = new Intent(Intent.ACTION_SEND);
+                                i.setType("text/plain");
+                                i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing song - " + finalSongName + " by " + finalArtistName + ". " + response + "\nShared via Saga Music app - http://getsa.ga/apk");
+                                try {
+                                    startActivity(Intent.createChooser(i, "Share via"));
+                                } catch (android.content.ActivityNotFoundException ex) {
+                                    Toast.makeText(getActivity(), "No application available to share song", Toast.LENGTH_SHORT).show();
+                                }
+                                mTracker.send(new HitBuilders.EventBuilder()
+                                        .setCategory("Music Share")
+                                        .setAction("Click")
+                                        .build());
+                            }
+                            else
+                                Toast.makeText(getActivity(),"Error in sharing",Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            mProgress.setVisibility(View.GONE);
+                            VolleyLog.d(TAG, "Error: " + error.getMessage());
+                            Toast.makeText(getActivity(),"Error connecting to the Internet",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    request.setShouldCache(false);
+                    mQueue.add(request);
+                    return true;
+                }
+            });
         }
 
         @Override
@@ -327,6 +379,7 @@ public class DownloadFragment extends Fragment {
             TextView artistName;
             NetworkImageView albumArt;
             LinearLayout songInfo;
+            View view;
 
             public ViewHolder(LinearLayout v) {
                 super(v);
@@ -336,6 +389,7 @@ public class DownloadFragment extends Fragment {
                         startDownload(songName.getText().toString() + " " + artistName.getText().toString());
                     }
                 });
+                this.view = v;
                 this.songName = (TextView) v.findViewById(R.id.song);
                 this.artistName = (TextView) v.findViewById(R.id.artist);
                 this.albumArt = (NetworkImageView) v.findViewById(R.id.album_art);
