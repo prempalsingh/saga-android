@@ -196,6 +196,9 @@ public class DownloadFragment extends Fragment {
                         DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                         DownloadManager.Request dr = new DownloadManager.Request(uri);
                         String filename = uri.getQueryParameter("mp3").replace("_"," ");
+                        filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video)\\b","");
+                        filename = filename.trim().replaceAll(" +", " ");
+                        Log.d(TAG, filename);
                         dr.setTitle(filename);
                         dr.setDestinationInExternalPublicDir("/Saga/", filename);
                         dMgr.enqueue(dr);
