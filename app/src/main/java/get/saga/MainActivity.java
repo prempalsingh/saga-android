@@ -1,6 +1,7 @@
 package get.saga;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -108,8 +109,15 @@ public class MainActivity extends ActionBarActivity {
             i.setType("message/rfc822");
             i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"prempal.42@gmail.com"});
             i.putExtra(Intent.EXTRA_SUBJECT, "Saga Feedback");
-            i.putExtra(Intent.EXTRA_TEXT   , "Model - " + Build.MODEL + "\nVersion - " + Build.VERSION.RELEASE
-                                                + "\n_ _ _ _ _ _ _ _ _ _ _ _ _\n");
+            try {
+                i.putExtra(Intent.EXTRA_TEXT   , "Model - " + Build.MODEL + "\nAndroid Version - " + Build.VERSION.RELEASE
+                        + "\nApp Version - " + getPackageManager()
+                        .getPackageInfo(getPackageName(), 0).versionName + "\n_ _ _ _ _ _ _ _ _ _ _ _ _\n");
+            }
+            catch(PackageManager.NameNotFoundException e){
+                e.printStackTrace();
+            }
+
             try {
                 startActivity(Intent.createChooser(i, "Choose email client..."));
             } catch (android.content.ActivityNotFoundException ex) {
