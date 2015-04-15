@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -161,7 +160,6 @@ public class LibraryFragment extends Fragment {
                 public void onClick(View view) {
                     musicSrv.setSong(i);
                     musicSrv.playSong();
-                    holder.play.setImageResource(android.R.drawable.ic_media_pause);
                 }
             });
         }
@@ -175,14 +173,13 @@ public class LibraryFragment extends Fragment {
     public class SongViewHolder extends RecyclerView.ViewHolder {
         protected TextView title;
         protected View view;
-        protected ImageView play;
 
         public SongViewHolder(View view) {
             super(view);
             this.view = view;
             this.title = (TextView) view.findViewById(R.id.songNameListView);
-            this.play = (ImageView) view.findViewById(R.id.playButtonListView);
         }
     }
+
 
 }

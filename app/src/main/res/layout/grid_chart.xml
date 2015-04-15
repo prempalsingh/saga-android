@@ -20,7 +20,6 @@
 
         <TextView
             android:id="@+id/song"
-            android:textAppearance="?android:attr/listSeparatorTextViewStyle"
             android:text="Song"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit="marquee_forever"
@@ -29,10 +28,10 @@
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="12sp"
-            android:padding="2dp"
-            android:gravity="center_horizontal"/>
+            android:textSize="15sp"
+            android:paddingTop="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"/>
 
         <TextView
             android:id="@+id/artist"
@@ -44,10 +43,10 @@
             android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="10sp"
-            android:padding="2dp"
-            android:gravity="center_horizontal"/>
+            android:textSize="12sp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"/>
 
 
 
