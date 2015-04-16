@@ -196,6 +196,9 @@ public class DownloadFragment extends Fragment {
                         DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                         DownloadManager.Request dr = new DownloadManager.Request(uri);
                         String filename = uri.getQueryParameter("mp3").replace("_"," ");
+                        filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b","");
+                        filename = filename.trim().replaceAll(" +", " ");
+                        Log.d(TAG, filename);
                         dr.setTitle(filename);
                         dr.setDestinationInExternalPublicDir("/Saga/", filename);
                         dMgr.enqueue(dr);
@@ -220,7 +223,7 @@ public class DownloadFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
-                    params.put("track", input);
+                    params.put("track", input +" +lyrics");
                     return params;
                 }
             };

@@ -31,8 +31,8 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ViewPager pager;
-        ViewPagerAdapter adapter;
+        final ViewPager pager;
+        final ViewPagerAdapter adapter;
         SlidingTabLayout tabs;
 
         File folder = new File(Environment.getExternalStorageDirectory() + "/Saga");
@@ -82,6 +82,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         tabs.setViewPager(pager);
+
     }
 
     @Override
