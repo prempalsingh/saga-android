@@ -42,7 +42,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSongList();
+        getSongList(getActivity());
     }
 
     @Override
@@ -94,12 +94,12 @@ public class LibraryFragment extends Fragment {
         }
     };
 
-    public void getSongList() {
+    public void getSongList(Context context) {
         String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
         Log.d("dir", dirPath);
         String selection = MediaStore.Audio.Media.DATA +" like ?";
         String[] selectionArgs={dirPath+"/saga/%"};
-        ContentResolver musicResolver = getActivity().getContentResolver();
+        ContentResolver musicResolver = context.getContentResolver();
         Cursor musicCursor = musicResolver.query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 null,
@@ -179,6 +179,11 @@ public class LibraryFragment extends Fragment {
             this.view = view;
             this.title = (TextView) view.findViewById(R.id.songNameListView);
         }
+    }
+
+    public void refreshList(Context context){
+        songList.clear();
+        getSongList(context);
     }
 
 
