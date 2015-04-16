@@ -59,9 +59,6 @@ public class MainActivity extends ActionBarActivity {
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             if (mToolbar != null) {
                 setSupportActionBar(mToolbar);
-                getSupportActionBar().setTitle(title);
-                mToolbar.setLogo(R.drawable.ic_launcher);
-                mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
                 //getSupportActionBar().setDisplayShowTitleEnabled(false);
                 //ImageView toolbarImageView = (ImageView) mToolbar.findViewById(R.id.timageview);
                 //TextView toolbarTextView = (TextView) mToolbar.findViewById(R.id.ttextview);
