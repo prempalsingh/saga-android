@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSongList(getActivity());
+        getSongList();
     }
 
     @Override
@@ -64,6 +65,17 @@ public class LibraryFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
+
+        final SwipeRefreshLayout refresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                songList.clear();
+                getSongList();
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+                refresh.setRefreshing(false);
+            }
+        });
 
         mAdapter = new LibraryAdapter();
         mRecyclerView.setAdapter(mAdapter);
@@ -94,13 +106,13 @@ public class LibraryFragment extends Fragment {
         }
     };
 
-    public void getSongList(Context context) {
+    public void getSongList() {
         Cursor musicCursor = null;
         try{
             String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
             String selection = MediaStore.Audio.Media.DATA +" like ?";
             String[] selectionArgs={dirPath+"/saga/%"};
-            ContentResolver musicResolver = context.getContentResolver();
+            ContentResolver musicResolver = getActivity().getContentResolver();
             musicCursor = musicResolver.query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     null,
@@ -121,7 +133,8 @@ public class LibraryFragment extends Fragment {
             }
         }
         catch(Exception e){
-            Toast.makeText(context,"Error fetching song list",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"Error fetching song list",Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
         finally{
             if(musicCursor != null){
@@ -190,11 +203,6 @@ public class LibraryFragment extends Fragment {
             this.view = view;
             this.title = (TextView) view.findViewById(R.id.songNameListView);
         }
-    }
-
-    public void refreshList(Context context){
-        songList.clear();
-        getSongList(context);
     }
 
 
