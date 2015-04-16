@@ -14,12 +14,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,29 +95,40 @@ public class LibraryFragment extends Fragment {
     };
 
     public void getSongList(Context context) {
-        String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
-        Log.d("dir", dirPath);
-        String selection = MediaStore.Audio.Media.DATA +" like ?";
-        String[] selectionArgs={dirPath+"/saga/%"};
-        ContentResolver musicResolver = context.getContentResolver();
-        Cursor musicCursor = musicResolver.query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                null,
-                selection,
-                selectionArgs,
-                MediaStore.Audio.Media.TITLE + " ASC");
-        if(musicCursor!=null && musicCursor.moveToFirst()){
-            int titleColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media._ID);
-            do {
-                long id = musicCursor.getLong(idColumn);
-                String title = musicCursor.getString(titleColumn);
-                songList.add(new SongInfo(id, title));
+        Cursor musicCursor = null;
+        try{
+            String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
+            String selection = MediaStore.Audio.Media.DATA +" like ?";
+            String[] selectionArgs={dirPath+"/saga/%"};
+            ContentResolver musicResolver = context.getContentResolver();
+            musicCursor = musicResolver.query(
+                    MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                    null,
+                    selection,
+                    selectionArgs,
+                    MediaStore.Audio.Media.TITLE + " ASC");
+            if(musicCursor!=null && musicCursor.moveToFirst()){
+                int titleColumn = musicCursor.getColumnIndex
+                        (android.provider.MediaStore.Audio.Media.TITLE);
+                int idColumn = musicCursor.getColumnIndex
+                        (android.provider.MediaStore.Audio.Media._ID);
+                do {
+                    long id = musicCursor.getLong(idColumn);
+                    String title = musicCursor.getString(titleColumn);
+                    songList.add(new SongInfo(id, title));
+                }
+                while (musicCursor.moveToNext());
             }
-            while (musicCursor.moveToNext());
         }
+        catch(Exception e){
+            Toast.makeText(context,"Error fetching song list",Toast.LENGTH_SHORT).show();
+        }
+        finally{
+            if(musicCursor != null){
+                musicCursor.close();
+            }
+        }
+
     }
 
     @Override
