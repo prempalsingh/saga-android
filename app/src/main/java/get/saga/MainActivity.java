@@ -54,11 +54,13 @@ public class MainActivity extends ActionBarActivity {
 
 
         setContentView(R.layout.activity_main);
-        String title = " Saga";
+        String title = "";
         if (mToolbar == null) {
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             if (mToolbar != null) {
                 setSupportActionBar(mToolbar);
+                getSupportActionBar().setTitle(title);
+                mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
                 //getSupportActionBar().setDisplayShowTitleEnabled(false);
                 //ImageView toolbarImageView = (ImageView) mToolbar.findViewById(R.id.timageview);
                 //TextView toolbarTextView = (TextView) mToolbar.findViewById(R.id.ttextview);

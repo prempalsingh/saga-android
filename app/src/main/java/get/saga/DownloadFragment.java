@@ -223,7 +223,7 @@ public class DownloadFragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
-                    params.put("track", input +" +lyrics");
+                    params.put("track", input +" lyrics");
                     return params;
                 }
             };
