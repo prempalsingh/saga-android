@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
@@ -44,7 +45,7 @@ public class DownloadReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         DownloadManager dMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Long downloadId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
         Cursor c = dMgr.query(new DownloadManager.Query().setFilterById(downloadId));
@@ -63,9 +64,10 @@ public class DownloadReceiver extends BroadcastReceiver {
                 else{
                     try{
                         TagOptionSingleton.getInstance().setAndroid(true);
-                        final AudioFile f = AudioFileIO.read(new File(Environment.getExternalStorageDirectory() + "/Saga/" + title));
+                        final File file = new File(Environment.getExternalStorageDirectory() + "/Saga/" + title);
+                        final AudioFile f = AudioFileIO.read(file);
                         final Tag tag = f.getTag();
-                        String url = "http://ts3.mm.bing.net/th?q=" + title.replace(" ","%20") + "+album+art";
+                        String url = "http://ts3.mm.bing.net/th?q=" + title.substring(0,title.length() - 4).replace(" ","%20") + "+album+art";
                         ImageRequest request = new ImageRequest(url,
                                 new Response.Listener<Bitmap>() {
                                     @Override
@@ -90,6 +92,10 @@ public class DownloadReceiver extends BroadcastReceiver {
                                                 tag.setField(FieldKey.TITLE, jsonObject.getString("track"));
                                             if(jsonObject.getString("artist") != null)
                                                 tag.setField(FieldKey.ARTIST, jsonObject.getString("artist"));
+                                            if(jsonObject.getString("artist") != null)
+                                                tag.setField(FieldKey.ALBUM_ARTIST, jsonObject.getString("artist"));
+                                            if(jsonObject.getString("release") != null)
+                                                tag.setField(FieldKey.YEAR, jsonObject.getString("release"));
                                             if(jsonObject.getString("trackno") != null)
                                                 tag.setField(FieldKey.TRACK, jsonObject.getString("trackno"));
                                             if(jsonObject.getString("album") != null)
@@ -99,6 +105,15 @@ public class DownloadReceiver extends BroadcastReceiver {
                                             tag.setField(FieldKey.COMMENT, "Downloaded from Saga");
                                             f.commit();
                                             Log.d(TAG, "AlbumArt deleted " +cover.delete());
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                                Intent mediaScanIntent = new Intent(
+                                                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                                                Uri contentUri = Uri.fromFile(file);
+                                                mediaScanIntent.setData(contentUri);
+                                                context.sendBroadcast(mediaScanIntent);
+                                            } else {
+                                                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory() + "/Saga")));
+                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         } finally {
@@ -131,7 +146,7 @@ public class DownloadReceiver extends BroadcastReceiver {
     private String readFromFile(Context context, String filename) {
 
         String ret = "";
-        String file = Environment.getExternalStorageDirectory() + filename.substring(0, filename.length() - 3) + "txt";
+        String file = filename.substring(0, filename.length() - 3) + "txt";
 
         try {
             InputStream inputStream = context.openFileInput(file);
@@ -155,7 +170,7 @@ public class DownloadReceiver extends BroadcastReceiver {
         } catch (IOException e) {
             Log.e(TAG, "Can not read file: " + e.toString());
         }finally {
-            boolean deleted = new File(file).delete();
+            boolean deleted = context.deleteFile(file);
             Log.d(TAG,"Song info deleted: " + deleted);
         }
 

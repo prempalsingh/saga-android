@@ -406,12 +406,15 @@ public class DownloadFragment extends Fragment {
 
     private void getSongInfo(final String input, final String filename){
         String url = "http://rhythmsa.ga/2/everything_post.php";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+        StringRequest request = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(String response) {
+                Log.d(TAG, response);
                 try {
                     OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
-                    outputStreamWriter.write(response.toString());
+                    outputStreamWriter.write(response);
                     outputStreamWriter.close();
                 }
                 catch (IOException e) {
@@ -419,11 +422,12 @@ public class DownloadFragment extends Fragment {
                 }
             }
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+                Log.e(TAG,error.toString());
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
