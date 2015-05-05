@@ -54,20 +54,19 @@ public class DownloadReceiver extends BroadcastReceiver {
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
                 final String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
                 Log.d("Receiver", "Title:" + title);
-                if(title.equalsIgnoreCase("Saga - Free Music Update")){
+                if (title.equalsIgnoreCase("Saga - Free Music Update")) {
                     Intent install = new Intent(Intent.ACTION_VIEW);
                     install.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk")), "application/vnd.android.package-archive");
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                  install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(install);
-                }
-                else{
-                    try{
+                } else {
+                    try {
                         TagOptionSingleton.getInstance().setAndroid(true);
                         final File file = new File(Environment.getExternalStorageDirectory() + "/Saga/" + title);
                         final AudioFile f = AudioFileIO.read(file);
                         final Tag tag = f.getTag();
-                        String url = "http://ts3.mm.bing.net/th?q=" + title.substring(0,title.length() - 4).replace(" ","%20") + "+album+art";
+                        String url = "http://ts3.mm.bing.net/th?q=" + title.substring(0, title.length() - 4).replace(" ", "%20") + "+album+art";
                         ImageRequest request = new ImageRequest(url,
                                 new Response.Listener<Bitmap>() {
                                     @Override
@@ -86,25 +85,25 @@ public class DownloadReceiver extends BroadcastReceiver {
                                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                                             AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
                                             tag.setField(artwork);
-                                            String json = readFromFile(context,title);
+                                            String json = readFromFile(context, title);
                                             JSONObject jsonObject = new JSONObject(json);
-                                            if(jsonObject.getString("track") != null)
+                                            if (jsonObject.getString("track") != null)
                                                 tag.setField(FieldKey.TITLE, jsonObject.getString("track"));
-                                            if(jsonObject.getString("artist") != null)
+                                            if (jsonObject.getString("artist") != null)
                                                 tag.setField(FieldKey.ARTIST, jsonObject.getString("artist"));
-                                            if(jsonObject.getString("artist") != null)
+                                            if (jsonObject.getString("artist") != null)
                                                 tag.setField(FieldKey.ALBUM_ARTIST, jsonObject.getString("artist"));
-                                            if(jsonObject.getString("release") != null)
+                                            if (jsonObject.getString("release") != null)
                                                 tag.setField(FieldKey.YEAR, jsonObject.getString("release"));
-                                            if(jsonObject.getString("trackno") != null)
+                                            if (jsonObject.getString("trackno") != null)
                                                 tag.setField(FieldKey.TRACK, jsonObject.getString("trackno"));
-                                            if(jsonObject.getString("album") != null)
+                                            if (jsonObject.getString("album") != null)
                                                 tag.setField(FieldKey.ALBUM, jsonObject.getString("album"));
-                                            if(jsonObject.getString("genre") != null)
+                                            if (jsonObject.getString("genre") != null)
                                                 tag.setField(FieldKey.GENRE, jsonObject.getString("genre"));
                                             tag.setField(FieldKey.COMMENT, "Downloaded from Saga");
                                             f.commit();
-                                            Log.d(TAG, "AlbumArt deleted " +cover.delete());
+                                            Log.d(TAG, "AlbumArt deleted " + cover.delete());
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                                 Intent mediaScanIntent = new Intent(
                                                         Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -134,8 +133,7 @@ public class DownloadReceiver extends BroadcastReceiver {
                                 });
                         request.setShouldCache(false);
                         VolleySingleton.getInstance(context).addToRequestQueue(request);
-                    }
-                    catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -151,27 +149,26 @@ public class DownloadReceiver extends BroadcastReceiver {
         try {
             InputStream inputStream = context.openFileInput(file);
 
-            if ( inputStream != null ) {
+            if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 String receiveString = "";
                 StringBuilder stringBuilder = new StringBuilder();
 
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                while ((receiveString = bufferedReader.readLine()) != null) {
                     stringBuilder.append(receiveString);
                 }
 
                 inputStream.close();
                 ret = stringBuilder.toString();
             }
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             Log.e(TAG, "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e(TAG, "Can not read file: " + e.toString());
-        }finally {
+        } finally {
             boolean deleted = context.deleteFile(file);
-            Log.d(TAG,"Song info deleted: " + deleted);
+            Log.d(TAG, "Song info deleted: " + deleted);
         }
 
         return ret;

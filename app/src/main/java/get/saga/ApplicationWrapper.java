@@ -11,14 +11,8 @@ import java.util.HashMap;
 /**
  * Created by prempal on 29/3/15.
  */
-public class ApplicationWrapper extends Application{
+public class ApplicationWrapper extends Application {
     private static final String PROPERTY_ID = "UA-59503716-2";
-
-    public enum TrackerName {
-        APP_TRACKER, // Tracker used only in this app.
-        GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
-    }
-
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public ApplicationWrapper() {
@@ -37,5 +31,10 @@ public class ApplicationWrapper extends Application{
 
         }
         return mTrackers.get(trackerId);
+    }
+
+    public enum TrackerName {
+        APP_TRACKER, // Tracker used only in this app.
+        GLOBAL_TRACKER, // Tracker used by all the apps from a company. eg: roll-up tracking.
     }
 }

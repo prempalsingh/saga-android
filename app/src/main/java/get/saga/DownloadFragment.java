@@ -60,19 +60,18 @@ import java.util.Map;
 public class DownloadFragment extends Fragment {
 
     private static final String TAG = "DownloadFragment";
-
+    int mVersionCode = 0;
+    String mChangelog = null;
+    String mAPKUrl = null;
+    Tracker mTracker;
     private EditText mInput;
     private ProgressBar mProgress;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
-    int mVersionCode = 0;
-    String mChangelog = null;
-    String mAPKUrl = null;
-    Tracker mTracker;
 
-    public DownloadFragment(){
+    public DownloadFragment() {
 
     }
 
@@ -96,10 +95,10 @@ public class DownloadFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_download, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.grid_view);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
             mRecyclerView.setLayoutManager(layoutManager);
-        }else {
+        } else {
             RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
             mRecyclerView.setLayoutManager(layoutManager);
         }
@@ -109,7 +108,7 @@ public class DownloadFragment extends Fragment {
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if(i== EditorInfo.IME_ACTION_DONE){
+                if (i == EditorInfo.IME_ACTION_DONE) {
                     startDownload(textView.getText().toString());
                 }
                 return false;
@@ -119,7 +118,7 @@ public class DownloadFragment extends Fragment {
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    startDownload(mInput.getText().toString());
+                startDownload(mInput.getText().toString());
             }
         });
 
@@ -131,7 +130,7 @@ public class DownloadFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     int updateVersionCode = response.getInt("versionCode");
-                    if (updateVersionCode > mVersionCode && mVersionCode!=0){
+                    if (updateVersionCode > mVersionCode && mVersionCode != 0) {
                         mAPKUrl = response.getString("apkUrl");
                         mChangelog = response.getString("changelog");
                         AlertDialog dialog = new AlertDialog.Builder(getActivity())
@@ -177,13 +176,13 @@ public class DownloadFragment extends Fragment {
         return rootView;
     }
 
-    private void startDownload(final String input){
-        Log.d("htd",input);
-        if(TextUtils.isEmpty(input))
-            Toast.makeText(getActivity(),"Enter song name",Toast.LENGTH_SHORT).show();
-        else if(input.equalsIgnoreCase("whomadeyou"))
-            Toast.makeText(getActivity(),"Prempal Singh",Toast.LENGTH_SHORT).show();
-        else{
+    private void startDownload(final String input) {
+        Log.d("htd", input);
+        if (TextUtils.isEmpty(input))
+            Toast.makeText(getActivity(), "Enter song name", Toast.LENGTH_SHORT).show();
+        else if (input.equalsIgnoreCase("whomadeyou"))
+            Toast.makeText(getActivity(), "Prempal Singh", Toast.LENGTH_SHORT).show();
+        else {
             mProgress.setVisibility(View.VISIBLE);
             String url = "http://getsa.ga/request.php";
             StringRequest request = new StringRequest(Request.Method.POST,
@@ -193,40 +192,39 @@ public class DownloadFragment extends Fragment {
                 public void onResponse(String response) {
                     Log.d(TAG, response);
                     mProgress.setVisibility(View.GONE);
-                    if(Patterns.WEB_URL.matcher(response).matches()){
+                    if (Patterns.WEB_URL.matcher(response).matches()) {
                         Uri uri = Uri.parse(response);
                         DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                         DownloadManager.Request dr = new DownloadManager.Request(uri);
-                        String filename = uri.getQueryParameter("mp3").replace("_"," ");
-                        filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b","");
+                        String filename = uri.getQueryParameter("mp3").replace("_", " ");
+                        filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b", "");
                         filename = filename.trim().replaceAll(" +", " ");
                         Log.d(TAG, filename);
                         dr.setTitle(filename);
                         dr.setDestinationInExternalPublicDir("/Saga/", filename);
                         dMgr.enqueue(dr);
-                        Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
-                        getSongInfo(input,filename.substring(0, filename.length() - 4));
+                        Toast.makeText(getActivity(), "Downloading...", Toast.LENGTH_SHORT).show();
+                        getSongInfo(input, filename.substring(0, filename.length() - 4));
                         mTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("Music Download")
                                 .setAction("Click")
                                 .build());
-                    }
-                    else
-                        Toast.makeText(getActivity(),"Nothing found, sorry. Try another query?",Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(getActivity(), "Nothing found, sorry. Try another query?", Toast.LENGTH_SHORT).show();
                 }
             }, new Response.ErrorListener() {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    Toast.makeText(getActivity(),"Error connecting to the Internet",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
                     mProgress.setVisibility(View.GONE);
                 }
             }) {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
-                    params.put("track", input +" lyrics");
+                    params.put("track", input + " lyrics");
                     return params;
                 }
             };
@@ -236,7 +234,7 @@ public class DownloadFragment extends Fragment {
 
     }
 
-    private void getCharts(){
+    private void getCharts() {
 
         mImageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
 
@@ -264,6 +262,40 @@ public class DownloadFragment extends Fragment {
         });
         mQueue.add(request);
 
+    }
+
+    private void getSongInfo(final String input, final String filename) {
+        String url = "http://rhythmsa.ga/2/everything_post.php";
+        StringRequest request = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response);
+                try {
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
+                    outputStreamWriter.write(response);
+                    outputStreamWriter.close();
+                } catch (IOException e) {
+                    Log.e("Exception", "File write failed: " + e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, error.toString());
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("q", input);
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        mQueue.add(request);
     }
 
     private class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {
@@ -295,7 +327,7 @@ public class DownloadFragment extends Fragment {
             viewHolder.songName.setSelected(true);
             viewHolder.artistName.setText(artistName);
             viewHolder.artistName.setSelected(true);
-            String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ","%20") + "%20" + artistName.replace(" ","%20") + "+album+art";
+            String url = "http://ts3.mm.bing.net/th?q=" + songName.replace(" ", "%20") + "%20" + artistName.replace(" ", "%20") + "+album+art";
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
             viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
                 @Override
@@ -305,16 +337,15 @@ public class DownloadFragment extends Fragment {
 
                 @Override
                 public void onSuccess() {
-                    Bitmap bitmap = ((BitmapDrawable)viewHolder.albumArt.getDrawable()).getBitmap();
+                    Bitmap bitmap = ((BitmapDrawable) viewHolder.albumArt.getDrawable()).getBitmap();
                     Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
                         public void onGenerated(Palette palette) {
                             int bgColor = palette.getVibrantColor(R.color.white);
                             viewHolder.songInfo.setBackgroundColor(bgColor);
-                            if(Utils.isColorDark(bgColor)){
+                            if (Utils.isColorDark(bgColor)) {
                                 viewHolder.songName.setTextColor(getResources().getColor(R.color.white));
                                 viewHolder.artistName.setTextColor(getResources().getColor(R.color.white));
-                            }
-                            else{
+                            } else {
                                 viewHolder.songName.setTextColor(getResources().getColor(R.color.black));
                                 viewHolder.artistName.setTextColor(getResources().getColor(R.color.black));
                             }
@@ -335,14 +366,14 @@ public class DownloadFragment extends Fragment {
                 public boolean onLongClick(View view) {
                     mProgress.setVisibility(View.VISIBLE);
                     String url = "http://rhythmsa.ga/api/sharable.php?q=";
-                    url = url + finalSongName.replace(" ","+") + "+" + finalArtistName.replace(" ","+");
+                    url = url + finalSongName.replace(" ", "+") + "+" + finalArtistName.replace(" ", "+");
                     StringRequest request = new StringRequest(Request.Method.GET,
                             url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             mProgress.setVisibility(View.GONE);
                             Log.d(TAG, response);
-                            if(Patterns.WEB_URL.matcher(response).matches()){
+                            if (Patterns.WEB_URL.matcher(response).matches()) {
                                 Intent i = new Intent(Intent.ACTION_SEND);
                                 i.setType("text/plain");
                                 i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing song - " + finalSongName + " by " + finalArtistName + ". " + response + "\nShared via Saga Music app - http://getsa.ga/apk");
@@ -355,9 +386,8 @@ public class DownloadFragment extends Fragment {
                                         .setCategory("Music Share")
                                         .setAction("Click")
                                         .build());
-                            }
-                            else
-                                Toast.makeText(getActivity(),"Error in sharing",Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(getActivity(), "Error in sharing", Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
 
@@ -365,7 +395,7 @@ public class DownloadFragment extends Fragment {
                         public void onErrorResponse(VolleyError error) {
                             mProgress.setVisibility(View.GONE);
                             VolleyLog.d(TAG, "Error: " + error.getMessage());
-                            Toast.makeText(getActivity(),"Error connecting to the Internet",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
                         }
                     });
                     request.setShouldCache(false);
@@ -402,40 +432,5 @@ public class DownloadFragment extends Fragment {
                 this.songInfo = (LinearLayout) v.findViewById(R.id.songInfo);
             }
         }
-    }
-
-    private void getSongInfo(final String input, final String filename){
-        String url = "http://rhythmsa.ga/2/everything_post.php";
-        StringRequest request = new StringRequest(Request.Method.POST,
-                url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Log.d(TAG, response);
-                try {
-                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
-                    outputStreamWriter.write(response);
-                    outputStreamWriter.close();
-                }
-                catch (IOException e) {
-                    Log.e("Exception", "File write failed: " + e.toString());
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG,error.toString());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("q", input);
-                return params;
-            }
-        };
-        request.setShouldCache(false);
-        mQueue.add(request);
     }
 }

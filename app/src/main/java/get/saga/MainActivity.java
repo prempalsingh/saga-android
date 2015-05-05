@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
             folder.mkdir();
         }
 
-        try{
+        try {
             // Get tracker.
             Tracker t = ((ApplicationWrapper) getApplication()).getTracker(
                     ApplicationWrapper.TrackerName.APP_TRACKER);
@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
             t.setScreenName("MainActivity");
             // Send a screen view.
             t.send(new HitBuilders.ScreenViewBuilder().build());
-        }catch(Exception e){
+        } catch (Exception e) {
             //just as a protective measure
         }
 
@@ -69,7 +69,7 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        adapter =  new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -107,14 +107,13 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_feedback) {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("message/rfc822");
-            i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"prempal.42@gmail.com"});
+            i.putExtra(Intent.EXTRA_EMAIL, new String[]{"prempal.42@gmail.com"});
             i.putExtra(Intent.EXTRA_SUBJECT, "Saga Feedback");
             try {
-                i.putExtra(Intent.EXTRA_TEXT   , "Model - " + Build.MODEL + "\nAndroid Version - " + Build.VERSION.RELEASE
+                i.putExtra(Intent.EXTRA_TEXT, "Model - " + Build.MODEL + "\nAndroid Version - " + Build.VERSION.RELEASE
                         + "\nApp Version - " + getPackageManager()
                         .getPackageInfo(getPackageName(), 0).versionName + "\n_ _ _ _ _ _ _ _ _ _ _ _ _\n");
-            }
-            catch(PackageManager.NameNotFoundException e){
+            } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
 
@@ -123,8 +122,7 @@ public class MainActivity extends ActionBarActivity {
             } catch (android.content.ActivityNotFoundException ex) {
                 Toast.makeText(this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if(id == R.id.action_invite) {
+        } else if (id == R.id.action_invite) {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing app - Saga. \nhttp://getsa.ga/apk ");
@@ -141,8 +139,8 @@ public class MainActivity extends ActionBarActivity {
 
     public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-        CharSequence TAB_TITLES[]={"DOWNLOAD","LIBRARY"};
-        int NUM_TAB =2;
+        CharSequence TAB_TITLES[] = {"DOWNLOAD", "LIBRARY"};
+        int NUM_TAB = 2;
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -151,13 +149,10 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public Fragment getItem(int position) {
 
-            if(position == 0)
-            {
+            if (position == 0) {
                 DownloadFragment dF = new DownloadFragment();
                 return dF;
-            }
-            else
-            {
+            } else {
                 LibraryFragment lF = new LibraryFragment();
                 return lF;
             }

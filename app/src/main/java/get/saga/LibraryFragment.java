@@ -38,7 +38,25 @@ public class LibraryFragment extends Fragment {
     private List<SongInfo> songList = new ArrayList<>();
     private MusicService musicSrv;
     private Intent playIntent;
-    private boolean musicBound=false;
+    private boolean musicBound = false;
+    //connect to the service
+    private ServiceConnection musicConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicSrv.setList((ArrayList<SongInfo>) songList);
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,7 +67,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if(playIntent==null){
+        if (playIntent == null) {
             playIntent = new Intent(getActivity(), MusicService.class);
             getActivity().bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             getActivity().startService(playIntent);
@@ -79,7 +97,7 @@ public class LibraryFragment extends Fragment {
 
         mAdapter = new LibraryAdapter();
         mRecyclerView.setAdapter(mAdapter);
-        if(mAdapter.getItemCount()==0){
+        if (mAdapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
         }
@@ -87,31 +105,12 @@ public class LibraryFragment extends Fragment {
         return rootView;
     }
 
-    //connect to the service
-    private ServiceConnection musicConnection = new ServiceConnection(){
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
-            musicSrv = binder.getService();
-            //pass list
-            musicSrv.setList((ArrayList<SongInfo>) songList);
-            musicBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            musicBound = false;
-        }
-    };
-
     public void getSongList() {
         Cursor musicCursor = null;
-        try{
-            String dirPath= Environment.getExternalStorageDirectory().getAbsolutePath();
-            String selection = MediaStore.Audio.Media.DATA +" like ?";
-            String[] selectionArgs={dirPath+"/saga/%"};
+        try {
+            String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            String selection = MediaStore.Audio.Media.DATA + " like ?";
+            String[] selectionArgs = {dirPath + "/saga/%"};
             ContentResolver musicResolver = getActivity().getContentResolver();
             musicCursor = musicResolver.query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -119,7 +118,7 @@ public class LibraryFragment extends Fragment {
                     selection,
                     selectionArgs,
                     MediaStore.Audio.Media.TITLE + " ASC");
-            if(musicCursor!=null && musicCursor.moveToFirst()){
+            if (musicCursor != null && musicCursor.moveToFirst()) {
                 int titleColumn = musicCursor.getColumnIndex
                         (android.provider.MediaStore.Audio.Media.TITLE);
                 int idColumn = musicCursor.getColumnIndex
@@ -131,13 +130,11 @@ public class LibraryFragment extends Fragment {
                 }
                 while (musicCursor.moveToNext());
             }
-        }
-        catch(Exception e){
-            Toast.makeText(getActivity(),"Error fetching song list",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Error fetching song list", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
-        }
-        finally{
-            if(musicCursor != null){
+        } finally {
+            if (musicCursor != null) {
                 musicCursor.close();
             }
         }
@@ -147,7 +144,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onDestroy() {
         getActivity().stopService(playIntent);
-        musicSrv=null;
+        musicSrv = null;
         super.onDestroy();
     }
 
@@ -157,16 +154,21 @@ public class LibraryFragment extends Fragment {
         private long mId;
         private String mDuration;
 
-        public SongInfo(long id,String title){
+        public SongInfo(long id, String title) {
             mId = id;
             mTitle = title;
         }
 
-        public long getID(){return mId;}
-        public String getTitle(){return mTitle;}
+        public long getID() {
+            return mId;
+        }
+
+        public String getTitle() {
+            return mTitle;
+        }
     }
 
-    public class LibraryAdapter extends RecyclerView.Adapter<SongViewHolder>{
+    public class LibraryAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
         @Override
         public SongViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {

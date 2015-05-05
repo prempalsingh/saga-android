@@ -16,13 +16,13 @@ import java.util.ArrayList;
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
+    private final IBinder musicBind = new MusicBinder();
     //media player
     private MediaPlayer player;
     //song list
     private ArrayList<LibraryFragment.SongInfo> songs;
     //current position
     private int songPosn;
-    private final IBinder musicBind = new MusicBinder();
 
     public MusicService() {
     }
@@ -31,13 +31,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onCreate() {
         super.onCreate();
         //initialize position
-        songPosn=0;
+        songPosn = 0;
         //create player
         player = new MediaPlayer();
         initMusicPlayer();
     }
 
-    public void playSong(){
+    public void playSong() {
         player.reset();
         //get song
         LibraryFragment.SongInfo playSong = songs.get(songPosn);
@@ -47,16 +47,15 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         Uri trackUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 currSong);
-        try{
+        try {
             player.setDataSource(getApplicationContext(), trackUri);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
     }
 
-    public void initMusicPlayer(){
+    public void initMusicPlayer() {
         //set player properties
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
@@ -66,14 +65,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player.setOnErrorListener(this);
     }
 
-    public void setList(ArrayList<LibraryFragment.SongInfo> theSongs){
-        songs=theSongs;
-    }
-
-    public class MusicBinder extends Binder {
-        MusicService getService() {
-            return MusicService.this;
-        }
+    public void setList(ArrayList<LibraryFragment.SongInfo> theSongs) {
+        songs = theSongs;
     }
 
     @Override
@@ -103,8 +96,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         mediaPlayer.start();
     }
 
-    public void setSong(int songIndex){
-        songPosn=songIndex;
+    public void setSong(int songIndex) {
+        songPosn = songIndex;
+    }
+
+    public class MusicBinder extends Binder {
+        MusicService getService() {
+            return MusicService.this;
+        }
     }
 
 
