@@ -16,9 +16,11 @@ import com.android.volley.toolbox.ImageRequest;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagOptionSingleton;
 import org.jaudiotagger.tag.images.AndroidArtwork;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,14 +44,14 @@ public class DownloadReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(final Context context, Intent intent) {
         DownloadManager dMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Long downloadId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
         Cursor c = dMgr.query(new DownloadManager.Query().setFilterById(downloadId));
         if (c.moveToFirst()) {
             int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
+                final String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
                 Log.d("Receiver", "Title:" + title);
                 if(title.equalsIgnoreCase("Saga - Free Music Update")){
                     Intent install = new Intent(Intent.ACTION_VIEW);
@@ -82,7 +84,19 @@ public class DownloadReceiver extends BroadcastReceiver {
                                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                                             AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
                                             tag.setField(artwork);
-
+                                            String json = readFromFile(context,title);
+                                            JSONObject jsonObject = new JSONObject(json);
+                                            if(jsonObject.getString("track") != null)
+                                                tag.setField(FieldKey.TITLE, jsonObject.getString("track"));
+                                            if(jsonObject.getString("artist") != null)
+                                                tag.setField(FieldKey.ARTIST, jsonObject.getString("artist"));
+                                            if(jsonObject.getString("trackno") != null)
+                                                tag.setField(FieldKey.TRACK, jsonObject.getString("trackno"));
+                                            if(jsonObject.getString("album") != null)
+                                                tag.setField(FieldKey.ALBUM, jsonObject.getString("album"));
+                                            if(jsonObject.getString("genre") != null)
+                                                tag.setField(FieldKey.GENRE, jsonObject.getString("genre"));
+                                            tag.setField(FieldKey.COMMENT, "Downloaded from Saga");
                                             f.commit();
                                             Log.d(TAG, "AlbumArt deleted " +cover.delete());
                                         } catch (Exception e) {

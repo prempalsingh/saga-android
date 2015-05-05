@@ -423,7 +423,14 @@ public class DownloadFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("q", input);
+                return params;
+            }
+        };
         request.setShouldCache(false);
         mQueue.add(request);
     }
