@@ -5,16 +5,37 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagOptionSingleton;
+import org.jaudiotagger.tag.images.AndroidArtwork;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by prempal on 29/3/15.
  */
 public class DownloadReceiver extends BroadcastReceiver {
+
+    private String TAG = "Receiver";
 
     public DownloadReceiver() {
 
@@ -37,59 +58,93 @@ public class DownloadReceiver extends BroadcastReceiver {
 //                  install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(install);
                 }
-//                else{
-//                    try{
-//                        TagOptionSingleton.getInstance().setAndroid(true);
-//                        final AudioFile f = AudioFileIO.read(new File(Environment.getExternalStorageDirectory() + "/Saga/" + title));
-//                        final Tag tag = f.getTag();
-//                        String url = "http://ts3.mm.bing.net/th?q=" + title.replace(" ","%20") + "+album+art";
-//                        ImageRequest request = new ImageRequest(url,
-//                                new Response.Listener<Bitmap>() {
-//                                    @Override
-//                                    public void onResponse(Bitmap bitmap) {
-//                                        FileOutputStream out = null;
-//                                        try {
-//                                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//                                            String imageFileName = "JPEG_" + timeStamp + "_";
-//                                            File storageDir = Environment.getExternalStorageDirectory();
-//                                            File cover = File.createTempFile(
-//                                                    imageFileName, /* prefix */
-//                                                    ".jpg", /* suffix */
-//                                                    storageDir /* directory */
-//                                            );
-//                                            out = new FileOutputStream(cover);
-//                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//                                            AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
-//                                            tag.addField(artwork);
-//                                            f.commit();
-//                                            boolean deleted = false; //cover.delete();
-//                                            Log.d("Receiver",tag.toString() + deleted);
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        } finally {
-//                                            try {
-//                                                if (out != null) {
-//                                                    out.close();
-//                                                }
-//                                            } catch (IOException e) {
-//                                                e.printStackTrace();
-//                                            }
-//                                        }
-//                                    }
-//                                }, 0, 0, null,
-//                                new Response.ErrorListener() {
-//                                    public void onErrorResponse(VolleyError error) {
-//                                        error.printStackTrace();
-//                                    }
-//                                });
-//                        request.setShouldCache(false);
-//                        VolleySingleton.getInstance(context).addToRequestQueue(request);
-//                    }
-//                    catch(Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
+                else{
+                    try{
+                        TagOptionSingleton.getInstance().setAndroid(true);
+                        final AudioFile f = AudioFileIO.read(new File(Environment.getExternalStorageDirectory() + "/Saga/" + title));
+                        final Tag tag = f.getTag();
+                        String url = "http://ts3.mm.bing.net/th?q=" + title.replace(" ","%20") + "+album+art";
+                        ImageRequest request = new ImageRequest(url,
+                                new Response.Listener<Bitmap>() {
+                                    @Override
+                                    public void onResponse(Bitmap bitmap) {
+                                        FileOutputStream out = null;
+                                        try {
+                                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                            String imageFileName = "JPEG_" + timeStamp + "_";
+                                            File storageDir = Environment.getExternalStorageDirectory();
+                                            File cover = File.createTempFile(
+                                                    imageFileName, /* prefix */
+                                                    ".jpg", /* suffix */
+                                                    storageDir /* directory */
+                                            );
+                                            out = new FileOutputStream(cover);
+                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                            AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
+                                            tag.setField(artwork);
+
+                                            f.commit();
+                                            Log.d(TAG, "AlbumArt deleted " +cover.delete());
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        } finally {
+                                            try {
+                                                if (out != null) {
+                                                    out.close();
+                                                }
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }, 0, 0, null,
+                                new Response.ErrorListener() {
+                                    public void onErrorResponse(VolleyError error) {
+                                        error.printStackTrace();
+                                    }
+                                });
+                        request.setShouldCache(false);
+                        VolleySingleton.getInstance(context).addToRequestQueue(request);
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+    }
+
+    private String readFromFile(Context context, String filename) {
+
+        String ret = "";
+        String file = Environment.getExternalStorageDirectory() + filename.substring(0, filename.length() - 3) + "txt";
+
+        try {
+            InputStream inputStream = context.openFileInput(file);
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e(TAG, "Can not read file: " + e.toString());
+        }finally {
+            boolean deleted = new File(file).delete();
+            Log.d(TAG,"Song info deleted: " + deleted);
+        }
+
+        return ret;
     }
 }

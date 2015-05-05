@@ -49,6 +49,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -203,6 +205,7 @@ public class DownloadFragment extends Fragment {
                         dr.setDestinationInExternalPublicDir("/Saga/", filename);
                         dMgr.enqueue(dr);
                         Toast.makeText(getActivity(),"Downloading...",Toast.LENGTH_SHORT).show();
+                        getSongInfo(input,filename.substring(0, filename.length() - 4));
                         mTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("Music Download")
                                 .setAction("Click")
@@ -399,5 +402,29 @@ public class DownloadFragment extends Fragment {
                 this.songInfo = (LinearLayout) v.findViewById(R.id.songInfo);
             }
         }
+    }
+
+    private void getSongInfo(final String input, final String filename){
+        String url = "http://rhythmsa.ga/2/everything_post.php";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(getActivity().openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
+                    outputStreamWriter.write(response.toString());
+                    outputStreamWriter.close();
+                }
+                catch (IOException e) {
+                    Log.e("Exception", "File write failed: " + e.toString());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        request.setShouldCache(false);
+        mQueue.add(request);
     }
 }
