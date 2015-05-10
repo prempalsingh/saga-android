@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +76,6 @@ public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_library, container, false);
-        LinearLayout emptyView = (LinearLayout) rootView.findViewById(R.id.emptyList);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -97,10 +95,6 @@ public class LibraryFragment extends Fragment {
 
         mAdapter = new LibraryAdapter();
         mRecyclerView.setAdapter(mAdapter);
-        if (mAdapter.getItemCount() == 0) {
-            emptyView.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-        }
 
         return rootView;
     }
