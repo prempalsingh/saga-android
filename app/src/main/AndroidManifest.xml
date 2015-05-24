@@ -42,6 +42,10 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name=".WelcomeActivity">
+        </activity>
     </application>
 
 </manifest>
