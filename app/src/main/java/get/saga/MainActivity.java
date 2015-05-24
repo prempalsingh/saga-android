@@ -69,12 +69,6 @@ public class MainActivity extends ActionBarActivity {
             if (mToolbar != null) {
                 setSupportActionBar(mToolbar);
                 getSupportActionBar().setTitle(title);
-                mToolbar.setTitleTextColor(getResources().getColor(R.color.white));
-                //getSupportActionBar().setDisplayShowTitleEnabled(false);
-                //ImageView toolbarImageView = (ImageView) mToolbar.findViewById(R.id.timageview);
-                //TextView toolbarTextView = (TextView) mToolbar.findViewById(R.id.ttextview);
-                //toolbarImageView.setImageResource(R.drawable.untitled);
-                //toolbarTextView.setText("Saga");
             }
         }
 
@@ -140,6 +134,10 @@ public class MainActivity extends ActionBarActivity {
             } catch (android.content.ActivityNotFoundException ex) {
                 Toast.makeText(this, "No application available to invite friends.", Toast.LENGTH_SHORT).show();
             }
+            return true;
+        } else if (id == R.id.action_settings) {
+            Intent i = new Intent(this,Settings.class);
+            startActivity(i);
             return true;
         }
 

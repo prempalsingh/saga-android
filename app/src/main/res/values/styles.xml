@@ -10,9 +10,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="myCustomTheme" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColorPrimary">@android:color/black</item>
-        <item name="android:textColorSecondary">#FFFFFF</item>
+    <style name="FilePickerTheme" parent="AppTheme">
+        <item name="alertDialogTheme">@style/FilePickerAlertDialogTheme</item>
+    </style>
+
+    <style name="FilePickerAlertDialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 

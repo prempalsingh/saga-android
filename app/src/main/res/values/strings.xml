@@ -9,6 +9,13 @@
     <string name="welcome">Welcome to Saga</string>
     <string name="welcome_text">Before we begin, here is some important legal information regarding your use of this app. This will only take a minute!</string>
     <string name="eula">Your use of this app is governed by:\n\na) Saga Terms of Service (www.getsa.ga/terms)\nb) Saga\'s Privacy Policy (www.getsa.ga/privacy)\n\nSaga\'s terms of service and privacy policies may be updated from time to time and without notice.</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_storage_path">Storage Path</string>
+    <string name="pref_search_results">Search Results</string>
+    <string name="pref_search_results_summary_on">Show search results</string>
+    <string name="pref_search_results_summary_off">Automatically download the best match</string>
+
 
 
 </resources>
