@@ -3,7 +3,6 @@ package get.saga;
 import android.app.Application;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
@@ -13,7 +12,7 @@ import java.util.HashMap;
  */
 public class ApplicationWrapper extends Application {
     private static final String PROPERTY_ID = "UA-59503716-2";
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public ApplicationWrapper() {
         super();
@@ -21,14 +20,11 @@ public class ApplicationWrapper extends Application {
 
     synchronized Tracker getTracker(TrackerName trackerId) {
         if (!mTrackers.containsKey(trackerId)) {
-
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(PROPERTY_ID)
                     : (trackerId == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker(R.xml.global_tracker)
                     : analytics.newTracker(R.xml.global_tracker);
             mTrackers.put(trackerId, t);
-
         }
         return mTrackers.get(trackerId);
     }
