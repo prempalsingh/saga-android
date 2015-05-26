@@ -11,7 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +25,7 @@ import java.io.File;
 import get.saga.ui.SlidingTabLayout;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     Toolbar mToolbar;
 
@@ -136,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
             }
             return true;
         } else if (id == R.id.action_settings) {
-            Intent i = new Intent(this,Settings.class);
+            Intent i = new Intent(this, Settings.class);
             startActivity(i);
             return true;
         }
@@ -157,11 +157,9 @@ public class MainActivity extends ActionBarActivity {
         public Fragment getItem(int position) {
 
             if (position == 0) {
-                DownloadFragment dF = new DownloadFragment();
-                return dF;
+                return new DownloadFragment();
             } else {
-                LibraryFragment lF = new LibraryFragment();
-                return lF;
+                return new LibraryFragment();
             }
         }
 

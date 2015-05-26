@@ -38,7 +38,7 @@ import java.util.Date;
  */
 public class DownloadReceiver extends BroadcastReceiver {
 
-    private String TAG = "Receiver";
+    private final String TAG = "Receiver";
 
     public DownloadReceiver() {
 
@@ -58,7 +58,6 @@ public class DownloadReceiver extends BroadcastReceiver {
                     Intent install = new Intent(Intent.ACTION_VIEW);
                     install.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk")), "application/vnd.android.package-archive");
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                  install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                     context.startActivity(install);
                 } else {
                     try {

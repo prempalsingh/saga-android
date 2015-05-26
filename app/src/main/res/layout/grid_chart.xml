@@ -1,57 +1,54 @@
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="3dp">
 
     <com.android.volley.toolbox.NetworkImageView
-         android:layout_width="match_parent"
-         android:layout_height="150dp"
-         android:scaleType="centerCrop"
-         android:layout_gravity="center"
-         android:id="@+id/album_art"
-    />
+        android:id="@+id/album_art"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
+        android:id="@+id/songInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/songInfo"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/song"
-            android:text="Song"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:ems="3"
-            android:maxLines="1"
-            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:paddingTop="8dp"
+            android:ellipsize="marquee"
+            android:ems="3"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"/>
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:singleLine="true"
+            android:text="Song"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/artist"
-            android:text="Artist"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:ems="3"
-            android:maxLines="1"
-            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:ellipsize="marquee"
+            android:ems="3"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
             android:paddingBottom="8dp"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"/>
-
+            android:paddingRight="8dp"
+            android:singleLine="true"
+            android:text="Artist"
+            android:textSize="12sp" />
 
 
     </LinearLayout>
 
 
-
-    </LinearLayout>
+</LinearLayout>

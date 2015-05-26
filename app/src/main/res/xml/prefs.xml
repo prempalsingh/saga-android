@@ -1,14 +1,43 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-        android:key="prefStoragePath"
-        android:title="@string/pref_storage_path"/>
+    <PreferenceCategory
+        android:title="General">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="prefSearchResults"
-        android:summaryOff="@string/pref_search_results_summary_off"
-        android:summaryOn="@string/pref_search_results_summary_on"
-        android:title="@string/pref_search_results" />
+        <Preference
+            android:key="prefStoragePath"
+            android:title="@string/pref_storage_path"/>
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="prefSearchResults"
+            android:summaryOff="@string/pref_search_results_summary_off"
+            android:summaryOn="@string/pref_search_results_summary_on"
+            android:title="@string/pref_search_results" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="About">
+
+        <Preference
+            android:key="prefTOS"
+            android:title="@string/pref_TOS"
+            android:summary="@string/checkout"/>
+
+        <Preference
+            android:key="prefPrivacy"
+            android:title="@string/pref_privacy_policy"
+            android:summary="@string/checkout"/>
+
+        <Preference
+            android:key="prefFacebook"
+            android:title="@string/pref_facebook"
+            android:summary="@string/follow_facebook"/>
+
+        <Preference
+            android:key="prefAppVersion"
+            android:title="@string/pref_app_version"/>
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

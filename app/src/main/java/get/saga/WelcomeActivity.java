@@ -18,7 +18,7 @@ public class WelcomeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                sp.edit().putBoolean("tos_accepted", true).commit();
+                sp.edit().putBoolean("tos_accepted", true).apply();
                 Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();

@@ -10,68 +10,69 @@
         android:weightSum="6"
         tools:context=".DownloadFragment">
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/list_item_card_view"
-        android:layout_width="match_parent"
-        android:layout_height="46dp"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        card_view:cardBackgroundColor="@color/searchgrey"
-        card_view:cardCornerRadius="2dp">
-
-        <LinearLayout
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/list_item_card_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:weightSum="4">
+            android:layout_height="46dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            card_view:cardBackgroundColor="@color/searchgrey"
+            card_view:cardCornerRadius="2dp">
 
-            <EditText
-                android:id="@+id/et_input"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"
-                android:hint="Type song name"
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:paddingLeft="16dp"
-                android:layout_weight="3"/>
-            <ImageButton
-                android:id="@+id/btn_download"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:scaleType="centerInside"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_action_download" />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+                android:orientation="horizontal"
+                android:weightSum="4">
+
+                <EditText
+                    android:id="@+id/et_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@android:color/transparent"
+                    android:hint="Type song name"
+                    android:imeOptions="actionDone"
+                    android:paddingLeft="16dp"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/btn_download"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_action_download" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
 
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/grid_view"
-            android:layout_marginTop="1dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/grid_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
         </FrameLayout>
 
 
     </LinearLayout>
 
-    </RelativeLayout>
+</RelativeLayout>
 
 
     <!--

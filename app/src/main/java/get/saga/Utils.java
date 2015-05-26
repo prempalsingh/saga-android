@@ -1,9 +1,11 @@
 package get.saga;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 
 /**
  * Created by prempal on 21/2/15.
@@ -24,5 +26,11 @@ public class Utils {
         } else {
             return true; // It's a dark color
         }
+    }
+
+    public static void viewURL(Context context, String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        context.startActivity(i);
     }
 }

@@ -5,35 +5,35 @@
     android:padding="2dp">
 
     <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/search_album_art"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:id="@+id/search_album_art"
-        android:scaleType="centerCrop"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Song Name"
         android:id="@+id/search_song"
-        android:layout_alignTop="@+id/search_album_art"
-        android:layout_toRightOf="@+id/search_album_art"
-        android:layout_toEndOf="@+id/search_album_art"
-        android:layout_marginLeft="12dp"
-        android:layout_marginStart="12dp" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Artist Name"
+        android:layout_alignTop="@+id/search_album_art"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/search_album_art"
+        android:layout_toRightOf="@+id/search_album_art"
+        android:text="Song Name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
         android:id="@+id/search_artist"
-        android:layout_below="@+id/search_song"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/search_song"
-        android:layout_alignStart="@+id/search_song" />
+        android:layout_alignStart="@+id/search_song"
+        android:layout_below="@+id/search_song"
+        android:text="Artist Name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
 </RelativeLayout>

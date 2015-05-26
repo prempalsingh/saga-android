@@ -12,7 +12,7 @@
 
     <string name="welcome">Welcome to Saga</string>
     <string name="welcome_text">Before we begin, here is some important legal information regarding your use of this app. This will only take a minute!</string>
-    <string name="eula">Your use of this app is governed by:\n\na) Saga Terms of Service (www.getsa.ga/terms)\nb) Saga\'s Privacy Policy (www.getsa.ga/privacy)\n\nSaga\'s terms of service and privacy policies may be updated from time to time and without notice.</string>
+    <string name="eula">Your use of this app is governed by:\n\na) Saga Terms of Service (http://getsa.ga/terms)\nb) Saga\'s Privacy Policy (http://getsa.ga/privacy)\n\nSaga\'s terms of service and privacy policies may be updated from time to time and without notice.</string>
     <string name="accept">ACCEPT</string>
     <string name="decline">DECLINE</string>
 
@@ -20,6 +20,15 @@
     <string name="pref_search_results">Search Results</string>
     <string name="pref_search_results_summary_on">Show search results</string>
     <string name="pref_search_results_summary_off">Automatically download the best match</string>
+    <string name="pref_TOS">Terms of Service</string>
+    <string name="pref_privacy_policy">Privacy Policy</string>
+    <string name="pref_app_version">App Version</string>
+    <string name="pref_update">Update</string>
+    <string name="checkout">Tap to check out</string>
+    <string name="pref_facebook">Facebook</string>
+    <string name="follow_facebook">Follow us on Facebook</string>
+    <string name="check_update">Check for update automatically</string>
+    <string name="made_with_love">Made with ♥ in India</string>
 
     <string name="hello_world">Hello world!</string>
 

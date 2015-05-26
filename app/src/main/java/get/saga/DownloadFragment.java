@@ -60,10 +60,10 @@ import java.util.Map;
 public class DownloadFragment extends Fragment {
 
     private static final String TAG = "DownloadFragment";
-    int mVersionCode = 0;
-    String mChangelog = null;
-    String mAPKUrl = null;
-    Tracker mTracker;
+    private int mVersionCode = 0;
+    private String mChangelog = null;
+    private String mAPKUrl = null;
+    private Tracker mTracker;
     private EditText mInput;
     private ProgressBar mProgress;
     private RecyclerView mRecyclerView;
@@ -168,7 +168,7 @@ public class DownloadFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("sd", error.toString());
+                error.printStackTrace();
             }
         });
         request.setShouldCache(false);
