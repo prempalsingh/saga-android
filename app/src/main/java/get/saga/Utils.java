@@ -33,4 +33,9 @@ public class Utils {
         i.setData(Uri.parse(url));
         context.startActivity(i);
     }
+
+    public static String getAlbumArt(String song, String artist) {
+        String BASE_URL = "http://ts3.mm.bing.net/th?q=";
+        return BASE_URL + song.replace(" ", "%20") + "%20" + artist.replace(" ", "%20") + "+album+art";
+    }
 }

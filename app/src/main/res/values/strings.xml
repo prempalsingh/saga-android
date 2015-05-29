@@ -8,6 +8,8 @@
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_search">Search</string>
 
+    <string name="type_song">Type song name</string>
+
     <string name="placeholder_library">You haven\'t downloaded any song yet!</string>
 
     <string name="welcome">Welcome to Saga</string>

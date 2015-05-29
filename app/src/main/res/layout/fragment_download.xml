@@ -33,7 +33,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="3"
                     android:background="@android:color/transparent"
-                    android:hint="Type song name"
+                    android:hint="@string/type_song"
                     android:imeOptions="actionDone"
                     android:paddingLeft="16dp"
                     android:singleLine="true" />

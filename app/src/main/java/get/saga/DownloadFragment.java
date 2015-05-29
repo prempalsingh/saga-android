@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -12,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
@@ -70,6 +72,7 @@ public class DownloadFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
+    private SharedPreferences sp;
 
     public DownloadFragment() {
 
@@ -88,6 +91,8 @@ public class DownloadFragment extends Fragment {
         }
         mTracker = ((ApplicationWrapper) getActivity().getApplication()).getTracker(
                 ApplicationWrapper.TrackerName.APP_TRACKER);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -109,7 +114,8 @@ public class DownloadFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    startDownload(textView.getText().toString());
+                    processQuery(textView.getText().toString());
+                    return true;
                 }
                 return false;
             }
@@ -118,7 +124,7 @@ public class DownloadFragment extends Fragment {
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startDownload(mInput.getText().toString());
+                processQuery(mInput.getText().toString());
             }
         });
 
@@ -177,61 +183,54 @@ public class DownloadFragment extends Fragment {
     }
 
     private void startDownload(final String input) {
-        Log.d("htd", input);
-        if (TextUtils.isEmpty(input))
-            Toast.makeText(getActivity(), "Enter song name", Toast.LENGTH_SHORT).show();
-        else if (input.equalsIgnoreCase("whomadeyou"))
-            Toast.makeText(getActivity(), "Prempal Singh", Toast.LENGTH_SHORT).show();
-        else {
-            mProgress.setVisibility(View.VISIBLE);
-            String url = "http://getsa.ga/request.php";
-            StringRequest request = new StringRequest(Request.Method.POST,
-                    url, new Response.Listener<String>() {
+        Log.d(TAG, input);
+        mProgress.setVisibility(View.VISIBLE);
+        String url = "http://getsa.ga/request.php";
+        StringRequest request = new StringRequest(Request.Method.POST,
+                url, new Response.Listener<String>() {
 
-                @Override
-                public void onResponse(String response) {
-                    Log.d(TAG, response);
-                    mProgress.setVisibility(View.GONE);
-                    if (Patterns.WEB_URL.matcher(response).matches()) {
-                        Uri uri = Uri.parse(response);
-                        DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                        DownloadManager.Request dr = new DownloadManager.Request(uri);
-                        String filename = uri.getQueryParameter("mp3").replace("_", " ");
-                        filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b", "");
-                        filename = filename.trim().replaceAll(" +", " ");
-                        Log.d(TAG, filename);
-                        dr.setTitle(filename);
-                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
-                        dMgr.enqueue(dr);
-                        Toast.makeText(getActivity(), "Downloading...", Toast.LENGTH_SHORT).show();
-                        getSongInfo(input, filename.substring(0, filename.length() - 4));
-                        mTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("Music Download")
-                                .setAction("Click")
-                                .build());
-                    } else
-                        Toast.makeText(getActivity(), "Nothing found, sorry. Try another query?", Toast.LENGTH_SHORT).show();
-                }
-            }, new Response.ErrorListener() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response);
+                mProgress.setVisibility(View.GONE);
+                if (Patterns.WEB_URL.matcher(response).matches()) {
+                    Uri uri = Uri.parse(response);
+                    DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                    DownloadManager.Request dr = new DownloadManager.Request(uri);
+                    String filename = uri.getQueryParameter("mp3").replace("_", " ");
+                    filename = filename.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b", "");
+                    filename = filename.trim().replaceAll(" +", " ");
+                    Log.d(TAG, filename);
+                    dr.setTitle(filename);
+                    dr.setDestinationInExternalPublicDir("/Saga/", filename);
+                    dMgr.enqueue(dr);
+                    Toast.makeText(getActivity(), "Downloading...", Toast.LENGTH_SHORT).show();
+                    getSongInfo(input, filename.substring(0, filename.length() - 4));
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("Music Download")
+                            .setAction("Click")
+                            .build());
+                } else
+                    Toast.makeText(getActivity(), "Nothing found, sorry. Try another query?", Toast.LENGTH_SHORT).show();
+            }
+        }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.d(TAG, "Error: " + error.getMessage());
-                    Toast.makeText(getActivity(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
-                    mProgress.setVisibility(View.GONE);
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("track", input + " lyrics");
-                    return params;
-                }
-            };
-            request.setShouldCache(false);
-            mQueue.add(request);
-        }
-
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                Toast.makeText(getActivity(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
+                mProgress.setVisibility(View.GONE);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("track", input + " lyrics");
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        mQueue.add(request);
     }
 
     private void getCharts() {
@@ -262,6 +261,19 @@ public class DownloadFragment extends Fragment {
         });
         mQueue.add(request);
 
+    }
+
+    private void processQuery(String query) {
+        if (TextUtils.isEmpty(query))
+            Toast.makeText(getActivity(), "Enter song name", Toast.LENGTH_SHORT).show();
+        else if (query.equalsIgnoreCase("whomadeyou"))
+            Toast.makeText(getActivity(), "Prempal Singh", Toast.LENGTH_SHORT).show();
+        else if (sp.getBoolean("prefSearchResults", true)) {
+            Intent intent = new Intent(getActivity(), SearchActivity.class);
+            intent.putExtra("query", query);
+            startActivity(intent);
+        } else
+            startDownload(query);
     }
 
     private void getSongInfo(final String input, final String filename) {
@@ -419,12 +431,6 @@ public class DownloadFragment extends Fragment {
 
             public ViewHolder(LinearLayout v) {
                 super(v);
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startDownload(songName.getText().toString() + " " + artistName.getText().toString());
-                    }
-                });
                 this.view = v;
                 this.songName = (TextView) v.findViewById(R.id.song);
                 this.artistName = (TextView) v.findViewById(R.id.artist);
