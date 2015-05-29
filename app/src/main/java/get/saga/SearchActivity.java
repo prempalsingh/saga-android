@@ -7,6 +7,8 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -51,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.search_toolbar);
-        EditText search = (EditText) findViewById(R.id.et_input);
+        final EditText search = (EditText) findViewById(R.id.et_input);
         mProgressBar = (ProgressBar) findViewById(R.id.search_progress);
         mClearButton = (ImageButton) findViewById(R.id.btn_cross);
         mRecyclerView = (RecyclerView) findViewById(R.id.search_results);
@@ -73,19 +75,45 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if (i == EditorInfo.IME_ACTION_DONE) {
-                    getSearchResults(textView.getText().toString());
+                    if (textView.length() > 0) {
+                        mClearButton.setVisibility(View.GONE);
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        getSearchResults(textView.getText().toString());
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Enter song name", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 }
                 return false;
             }
         });
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search.setText("");
+                mClearButton.setVisibility(View.GONE);
+            }
+        });
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0 && mClearButton.getVisibility() != View.VISIBLE) {
+                    mClearButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         getSearchResults(query);
-
-
-//        RecyclerView searchList = (RecyclerView) findViewById(R.id.search_list);
-//        searchList.setLayoutManager(new LinearLayoutManager(this));
-//        searchList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
     }
 
     private void getSearchResults(final String query) {
