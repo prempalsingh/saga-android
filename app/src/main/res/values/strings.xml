@@ -9,6 +9,13 @@
     <string name="title_activity_search">Search</string>
 
     <string name="type_song">Type song name</string>
+    <string name="error_connect">Error connecting to Internet</string>
+    <string name="new_update">New update available!</string>
+    <string name="update">Update</string>
+    <string name="update_checking">Checking for update..</string>
+    <string name="cancel">Cancel</string>
+    <string name="no_update">No update found</string>
+    <string name="update_now">Update now</string>
 
     <string name="placeholder_library">You haven\'t downloaded any song yet!</string>
 
@@ -25,11 +32,10 @@
     <string name="pref_TOS">Terms of Service</string>
     <string name="pref_privacy_policy">Privacy Policy</string>
     <string name="pref_app_version">App Version</string>
-    <string name="pref_update">Update</string>
+    <string name="pref_update">Check for Update</string>
     <string name="checkout">Tap to check out</string>
     <string name="pref_facebook">Facebook</string>
     <string name="follow_facebook">Follow us on Facebook</string>
-    <string name="check_update">Check for update automatically</string>
     <string name="made_with_love">Made with ♥ in India</string>
 
     <string name="hello_world">Hello world!</string>

@@ -14,6 +14,10 @@
             android:summaryOn="@string/pref_search_results_summary_on"
             android:title="@string/pref_search_results" />
 
+        <Preference
+            android:key="prefUpdate"
+            android:title="@string/pref_update" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

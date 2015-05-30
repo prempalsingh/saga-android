@@ -1,18 +1,14 @@
 package get.saga;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
@@ -40,7 +36,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.analytics.HitBuilders;
@@ -48,9 +43,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -62,9 +55,6 @@ import java.util.Map;
 public class DownloadFragment extends Fragment {
 
     private static final String TAG = "DownloadFragment";
-    private int mVersionCode = 0;
-    private String mChangelog = null;
-    private String mAPKUrl = null;
     private Tracker mTracker;
     private EditText mInput;
     private ProgressBar mProgress;
@@ -83,12 +73,7 @@ public class DownloadFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mQueue = VolleySingleton.getInstance(getActivity()).
                 getRequestQueue();
-        try {
-            mVersionCode = getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), 0).versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+
         mTracker = ((ApplicationWrapper) getActivity().getApplication()).getTracker(
                 ApplicationWrapper.TrackerName.APP_TRACKER);
 
@@ -130,55 +115,7 @@ public class DownloadFragment extends Fragment {
 
         getCharts();
 
-        String updateUrl = "https://www.dropbox.com/s/bka9o3p43oki217/saga.json?raw=1";
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, updateUrl, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    int updateVersionCode = response.getInt("versionCode");
-                    if (updateVersionCode > mVersionCode && mVersionCode != 0) {
-                        mAPKUrl = response.getString("apkUrl");
-                        mChangelog = response.getString("changelog");
-                        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                                .setTitle("New update available!")
-                                .setMessage(mChangelog)
-                                .setPositiveButton("Update now", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        File myFile = new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk");
-                                        if (myFile.exists())
-                                            myFile.delete();
-                                        Uri uri = Uri.parse(mAPKUrl);
-                                        DownloadManager dMgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                                        DownloadManager.Request dr = new DownloadManager.Request(uri);
-                                        String filename = "update.apk";
-                                        dr.setTitle("Saga - Free Music Update");
-                                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
-                                        dMgr.enqueue(dr);
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                })
-                                .setCancelable(false)
-                                .create();
-                        dialog.show();
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        request.setShouldCache(false);
-        mQueue.add(request);
+        Updater.checkForUpdates(getActivity(),false);
         return rootView;
     }
 

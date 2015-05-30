@@ -27,6 +27,7 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
     private final String FACEBOOK_URL = "https://www.facebook.com/sagafreemusic";
 
     private Preference storagePath;
+    private Preference update;
     private Preference privacy;
     private Preference terms;
     private Preference facebook;
@@ -42,6 +43,8 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
 
         storagePath = findPreference("prefStoragePath");
         storagePath.setOnPreferenceClickListener(this);
+        update = findPreference("prefUpdate");
+        update.setOnPreferenceClickListener(this);
         privacy = findPreference("prefPrivacy");
         privacy.setOnPreferenceClickListener(this);
         terms = findPreference("prefTOS");
@@ -60,7 +63,9 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if (preference == storagePath) {
+        if(preference == update){
+            Updater.checkForUpdates(getActivity(),true);
+        } else if(preference == storagePath) {
             Intent i = new Intent(context, FilePickerActivity.class);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
