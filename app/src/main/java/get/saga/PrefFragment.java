@@ -8,7 +8,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -21,7 +20,6 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
  */
 public class PrefFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-    private final String DEFAULT_PATH = Environment.getExternalStorageDirectory().getPath() + "/Saga";
     private final String TOS_URL = "http://getsa.ga/terms";
     private final String PRIVACY_URL = "http://getsa.ga/privacy";
     private final String FACEBOOK_URL = "https://www.facebook.com/sagafreemusic";
@@ -52,7 +50,7 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
         facebook = findPreference("prefFacebook");
         facebook.setOnPreferenceClickListener(this);
 
-        storagePath.setSummary(sp.getString("prefStoragePath", DEFAULT_PATH));
+        storagePath.setSummary(Utils.getStoragePath(getActivity()));
         try {
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             findPreference("prefAppVersion").setSummary(pInfo.versionName);

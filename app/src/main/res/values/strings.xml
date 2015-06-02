@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Saga</string>
+    <string name="app_name">Saga Music</string>
     <string name="action_feedback">Feedback</string>
     <string name="action_invite">Invite Friends</string>
     <string name="action_settings">Settings</string>
@@ -19,7 +19,7 @@
 
     <string name="placeholder_library">You haven\'t downloaded any song yet!</string>
 
-    <string name="welcome">Welcome to Saga</string>
+    <string name="welcome">Welcome to Saga Music</string>
     <string name="welcome_text">Before we begin, here is some important legal information regarding your use of this app. This will only take a minute!</string>
     <string name="eula">Your use of this app is governed by:\n\na) Saga Terms of Service (http://getsa.ga/terms)\nb) Saga\'s Privacy Policy (http://getsa.ga/privacy)\n\nSaga\'s terms of service and privacy policies may be updated from time to time and without notice.</string>
     <string name="accept">ACCEPT</string>

@@ -2,10 +2,13 @@ package get.saga;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 
 /**
  * Created by prempal on 21/2/15.
@@ -37,5 +40,12 @@ public class Utils {
     public static String getAlbumArt(String song, String artist) {
         String BASE_URL = "http://ts3.mm.bing.net/th?q=";
         return BASE_URL + song.replace(" ", "%20") + "%20" + artist.replace(" ", "%20") + "+album+art";
+    }
+
+    public static String getStoragePath(Context context){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        String storage = sp.getString("prefStoragePath",
+                Environment.getExternalStorageDirectory() + "/Saga");
+        return storage;
     }
 }

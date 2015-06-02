@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -102,9 +101,9 @@ public class LibraryFragment extends Fragment {
     public void getSongList() {
         Cursor musicCursor = null;
         try {
-            String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            String dirPath = Utils.getStoragePath(getActivity());
             String selection = MediaStore.Audio.Media.DATA + " like ?";
-            String[] selectionArgs = {dirPath + "/saga/%"};
+            String[] selectionArgs = {dirPath + "/%"};
             ContentResolver musicResolver = getActivity().getContentResolver();
             musicCursor = musicResolver.query(
                     MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,

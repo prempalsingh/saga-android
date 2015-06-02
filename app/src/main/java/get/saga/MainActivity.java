@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -44,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
         final ViewPagerAdapter adapter;
         SlidingTabLayout tabs;
 
-        File folder = new File(Environment.getExternalStorageDirectory() + "/Saga");
+        File folder = new File(Utils.getStoragePath(this));
         if (!folder.exists()) {
-            folder.mkdir();
+            folder.mkdirs();
         }
 
         try {

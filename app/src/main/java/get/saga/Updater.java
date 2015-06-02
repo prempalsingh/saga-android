@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
@@ -52,15 +51,16 @@ public class Updater {
                                 .setPositiveButton(context.getString(R.string.update_now), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        File myFile = new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk");
+                                        File myFile = new File(Utils.getStoragePath(context),"update.apk");
                                         if (myFile.exists())
                                             myFile.delete();
                                         Uri uri = Uri.parse(apkUrl);
                                         DownloadManager dMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                                         DownloadManager.Request dr = new DownloadManager.Request(uri);
                                         String filename = "update.apk";
-                                        dr.setTitle("Saga Music Update");
-                                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
+                                        dr.setTitle(context.getString(R.string.app_name) + " " + context.getString(R.string.update));
+                                        dr.setDestinationUri(Uri.fromFile(new File(Utils.getStoragePath(context) + "/" + filename)));
+//                                        dr.setDestinationInExternalPublicDir("/Saga/", filename);
                                         dMgr.enqueue(dr);
                                     }
                                 })

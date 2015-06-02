@@ -44,6 +44,7 @@ import com.google.android.gms.analytics.Tracker;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -139,7 +140,8 @@ public class DownloadFragment extends Fragment {
                     filename = filename.trim().replaceAll(" +", " ");
                     Log.d(TAG, filename);
                     dr.setTitle(filename);
-                    dr.setDestinationInExternalPublicDir("/Saga/", filename);
+                    dr.setDestinationUri(Uri.fromFile(new File(Utils.getStoragePath(getActivity()) + "/" + filename)));
+//                    dr.setDestinationInExternalPublicDir("/Saga/", filename);
                     dMgr.enqueue(dr);
                     Toast.makeText(getActivity(), "Downloading...", Toast.LENGTH_SHORT).show();
                     getSongInfo(input, filename.substring(0, filename.length() - 4));
