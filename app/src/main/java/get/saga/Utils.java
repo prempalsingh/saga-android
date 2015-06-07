@@ -9,6 +9,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by prempal on 21/2/15.
@@ -47,5 +51,15 @@ public class Utils {
         String storage = sp.getString("prefStoragePath",
                 Environment.getExternalStorageDirectory() + "/Saga");
         return storage;
+    }
+
+    public static void saveSongInfo(Context context, String filename, String content){
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(content);
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 }

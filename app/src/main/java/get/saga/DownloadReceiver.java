@@ -54,7 +54,7 @@ public class DownloadReceiver extends BroadcastReceiver {
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
                 final String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
                 Log.d("Receiver", "Title:" + title);
-                if (title.equalsIgnoreCase("Saga - Free Music Update")) {
+                if (title.equalsIgnoreCase(context.getString(R.string.app_name) + " " + context.getString(R.string.update))) {
                     Intent install = new Intent(Intent.ACTION_VIEW);
                     install.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory() + "/Saga/" + "update.apk")), "application/vnd.android.package-archive");
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

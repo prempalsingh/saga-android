@@ -9,6 +9,7 @@
     <string name="title_activity_search">Search</string>
 
     <string name="type_song">Type song name</string>
+    <string name="enter_song">Enter song name</string>
     <string name="error_connect">Error connecting to Internet</string>
     <string name="new_update">New update available!</string>
     <string name="update">Update</string>

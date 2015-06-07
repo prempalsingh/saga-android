@@ -29,6 +29,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,13 +38,17 @@ import org.json.JSONException;
 import java.util.HashMap;
 import java.util.Map;
 
+import get.saga.ui.DividerItemDecoration;
+
 
 public class SearchActivity extends AppCompatActivity {
 
     private static final String TAG = "SearchActivity";
     private RequestQueue mQueue;
     private ImageLoader mImageLoader;
-    private ProgressBar mProgressBar;
+    private ProgressBar mSearchProgress;
+    private ProgressBar mDownloadProgress;
+    private Tracker mTracker;
     private ImageButton mClearButton;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -54,14 +60,19 @@ public class SearchActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.search_toolbar);
         final EditText search = (EditText) findViewById(R.id.et_input);
-        mProgressBar = (ProgressBar) findViewById(R.id.search_progress);
+        mSearchProgress = (ProgressBar) findViewById(R.id.search_progress);
+        mDownloadProgress = (ProgressBar) findViewById(R.id.download_progress);
         mClearButton = (ImageButton) findViewById(R.id.btn_cross);
         mRecyclerView = (RecyclerView) findViewById(R.id.search_results);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
 
         mQueue = VolleySingleton.getInstance(this).getRequestQueue();
         mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
+
+        mTracker = ((ApplicationWrapper) getApplication()).getTracker(
+                ApplicationWrapper.TrackerName.APP_TRACKER);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -77,10 +88,10 @@ public class SearchActivity extends AppCompatActivity {
                 if (i == EditorInfo.IME_ACTION_DONE) {
                     if (textView.length() > 0) {
                         mClearButton.setVisibility(View.GONE);
-                        mProgressBar.setVisibility(View.VISIBLE);
+                        mSearchProgress.setVisibility(View.VISIBLE);
                         getSearchResults(textView.getText().toString());
                     } else {
-                        Toast.makeText(getApplicationContext(), "Enter song name", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.enter_song), Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
@@ -129,15 +140,15 @@ public class SearchActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 mRecyclerView.setAdapter(mAdapter);
-                mProgressBar.setVisibility(View.GONE);
+                mSearchProgress.setVisibility(View.GONE);
                 mClearButton.setVisibility(View.VISIBLE);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
-                mProgressBar.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), getString(R.string.error_connect), Toast.LENGTH_SHORT).show();
+                mSearchProgress.setVisibility(View.GONE);
                 mClearButton.setVisibility(View.VISIBLE);
             }
         }) {
@@ -171,9 +182,11 @@ public class SearchActivity extends AppCompatActivity {
         public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
             String songName = "unknown";
             String artistName = "unknown";
+            String albumartUrl = "unknown";
             try {
                 songName = mDataset.getJSONObject(i).getString("track");
                 artistName = mDataset.getJSONObject(i).getString("artist");
+                albumartUrl = mDataset.getJSONObject(i).getString("art");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -181,8 +194,34 @@ public class SearchActivity extends AppCompatActivity {
             viewHolder.songName.setSelected(true);
             viewHolder.artistName.setText(artistName);
             viewHolder.artistName.setSelected(true);
-            String url = Utils.getAlbumArt(songName, artistName);
-            viewHolder.albumArt.setImageUrl(url, mImageLoader);
+//            String url = Utils.getAlbumArt(songName, artistName);
+            viewHolder.albumArt.setImageUrl(albumartUrl, mImageLoader);
+            final String finalSongName = songName;
+            final String finalArtistName = artistName;
+            viewHolder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MusicDownloader.startDownload(getApplicationContext(), finalSongName + " " + finalArtistName, finalSongName, new MusicDownloader.DownloaderListener() {
+                        @Override
+                        public void showProgressBar() {
+                            mDownloadProgress.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void hideProgressBar() {
+                            mDownloadProgress.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onSuccess() {
+                            mTracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("Music Download")
+                                    .setAction("Click")
+                                    .build());
+                        }
+                    });
+                }
+            });
         }
 
         @Override
