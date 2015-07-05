@@ -58,6 +58,7 @@ public class Utils {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
             outputStreamWriter.write(content);
             outputStreamWriter.close();
+            Log.d("File:", "saved");
         } catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }

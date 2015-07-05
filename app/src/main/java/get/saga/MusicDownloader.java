@@ -3,12 +3,14 @@ package get.saga;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
@@ -57,7 +59,7 @@ public class MusicDownloader {
                     dMgr.enqueue(dr);
                     Toast.makeText(context, "Downloading...", Toast.LENGTH_SHORT).show();
                     listener.onSuccess();
-                    getSongInfo(context, fileName, artistName);
+                    getSongInfo(context, fileName.substring(0, fileName.length() - 4), artistName);
                 } else
                     Toast.makeText(context, "Nothing found, sorry. Try another query?", Toast.LENGTH_SHORT).show();
             }
@@ -86,9 +88,8 @@ public class MusicDownloader {
     }
 
     private static void getSongInfo(final Context context, final String filename, final String artistName) {
-        String url = "http://rhythmsa.ga/2/everything_post.php";
-        final String saveFile = filename.substring(0, filename.length() - 4);
-        StringRequest request = new StringRequest(Request.Method.POST,
+        String url = "http://rhythmsa.ga/2/everything.php?q=" + filename.replace(" ", "%20");
+        StringRequest request = new StringRequest(Request.Method.GET,
                 url, new Response.Listener<String>() {
 
             @Override
@@ -102,23 +103,16 @@ public class MusicDownloader {
                         e.printStackTrace();
                     }
                 }
-                Utils.saveSongInfo(context, saveFile, response);
+                Log.d("Test", "chal raha hai");
+                Utils.saveSongInfo(context, filename + ".txt", response);
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                VolleyLog.d("Music download", "Error: " + error.toString());
             }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                String query = null;
-                params.put("q", saveFile);
-                return params;
-            }
-        };
+        });
         request.setShouldCache(false);
         VolleySingleton.getInstance(context).getRequestQueue().add(request);
     }
