@@ -20,15 +20,21 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
  */
 public class PrefFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-    private final String TOS_URL = "http://getsa.ga/terms";
-    private final String PRIVACY_URL = "http://getsa.ga/privacy";
+    private final String TOS_URL = "http://sagaone.com/terms";
+    private final String PRIVACY_URL = "http://sagaone.com/privacy";
+    private final String ABOUT_URL = "http://sagaone.com/about";
     private final String FACEBOOK_URL = "https://www.facebook.com/sagafreemusic";
+    private final String GOOGLE_PLUS_URL = "https://plus.google.com/communities/104099181842319544700";
+    private final String MADE_WITH_LOVE_URL = "http://madewithlove.org.in";
 
     private Preference storagePath;
     private Preference update;
     private Preference privacy;
     private Preference terms;
     private Preference facebook;
+    private Preference googlePlus;
+    private Preference about;
+    private Preference madeWithLove;
     private SharedPreferences sp;
     private Context context;
 
@@ -49,6 +55,12 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
         terms.setOnPreferenceClickListener(this);
         facebook = findPreference("prefFacebook");
         facebook.setOnPreferenceClickListener(this);
+        googlePlus = findPreference("prefGooglePlus");
+        googlePlus.setOnPreferenceClickListener(this);
+        madeWithLove = findPreference("prefMadeWithLove");
+        madeWithLove.setOnPreferenceClickListener(this);
+        about = findPreference("prefAboutApp");
+        about.setOnPreferenceClickListener(this);
 
         storagePath.setSummary(Utils.getStoragePath(getActivity()));
         try {
@@ -72,10 +84,16 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
             return true;
         } else if (preference == facebook) {
             Utils.viewURL(context, FACEBOOK_URL);
+        } else if (preference == googlePlus) {
+            Utils.viewURL(context, GOOGLE_PLUS_URL);
         } else if (preference == privacy) {
             Utils.viewURL(context, PRIVACY_URL);
         } else if (preference == terms) {
             Utils.viewURL(context, TOS_URL);
+        } else if (preference == about) {
+            Utils.viewURL(context, ABOUT_URL);
+        } else if (preference == madeWithLove) {
+            Utils.viewURL(context, MADE_WITH_LOVE_URL);
         }
         return false;
     }

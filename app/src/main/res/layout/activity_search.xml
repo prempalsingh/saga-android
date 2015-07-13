@@ -49,18 +49,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="4dp"
+                    android:layout_marginRight="8dp"
                     android:layout_weight="1" />
 
                 <ImageButton
                     android:id="@+id/btn_cross"
-                    android:layout_width="72dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
+                    android:layout_marginRight="8dp"
                     android:background="@android:color/transparent"
                     android:scaleType="centerInside"
-                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:src="@drawable/ic_cancel_grey_700_36dp"
                     android:visibility="gone" />
 
             </LinearLayout>
@@ -73,7 +74,7 @@
         android:id="@+id/search_results"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="11dp"
         android:paddingTop="72dp" />
 
     <ProgressBar

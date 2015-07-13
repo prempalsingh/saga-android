@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_feedback) {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("message/rfc822");
-            i.putExtra(Intent.EXTRA_EMAIL, new String[]{"prempal.42@gmail.com"});
+            i.putExtra(Intent.EXTRA_EMAIL, new String[]{"prempal@sagaone.com"});
             i.putExtra(Intent.EXTRA_SUBJECT, "Saga Feedback");
             try {
                 i.putExtra(Intent.EXTRA_TEXT, "Model - " + Build.MODEL + "\nAndroid Version - " + Build.VERSION.RELEASE

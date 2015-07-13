@@ -2,8 +2,8 @@ package get.saga;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,6 +40,9 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Created by prempal on 16/2/15.
@@ -80,14 +83,15 @@ public class DownloadFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+
         mRecyclerView = (RecyclerView) view.findViewById(R.id.grid_view);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-            mRecyclerView.setLayoutManager(layoutManager);
-        } else {
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-            mRecyclerView.setLayoutManager(layoutManager);
-        }
+
+        GridLayoutManager glm = new GridLayoutManager(getActivity(), 2);
+        Point size = new Point();
+        getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+        int screenWidth = size.x;
+        glm.setSpanCount(screenWidth / (getResources().getDimensionPixelOffset(R.dimen.column_width_main_recyclerview)));
+        mRecyclerView.setLayoutManager(glm);
 
         mProgress = (ProgressBar) view.findViewById(R.id.progressBar);
         mInput = (EditText) view.findViewById(R.id.et_input);
@@ -101,6 +105,7 @@ public class DownloadFragment extends Fragment {
                 return false;
             }
         });
+
         ImageButton downloadBtn = (ImageButton) view.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,6 +151,7 @@ public class DownloadFragment extends Fragment {
             Intent intent = new Intent(getActivity(), SearchActivity.class);
             intent.putExtra("query", query);
             startActivity(intent);
+            mInput.setText("");
         } else
             MusicDownloader.startDownload(getActivity(), query, null, new MusicDownloader.DownloaderListener() {
                 @Override
@@ -197,7 +203,12 @@ public class DownloadFragment extends Fragment {
             viewHolder.songName.setSelected(true);
             viewHolder.artistName.setText(artistName);
             viewHolder.artistName.setSelected(true);
-            String url = Utils.getAlbumArt(songName, artistName);
+            String url = null;
+            try {
+                url = Utils.getAlbumArt(songName, artistName);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             viewHolder.albumArt.setImageUrl(url, mImageLoader);
             viewHolder.albumArt.setResponseObserver(new NetworkImageView.ResponseObserver() {
                 @Override
@@ -208,7 +219,8 @@ public class DownloadFragment extends Fragment {
                 @Override
                 public void onSuccess() {
                     Bitmap bitmap = ((BitmapDrawable) viewHolder.albumArt.getDrawable()).getBitmap();
-                    Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
+                    Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
                         public void onGenerated(Palette palette) {
                             int bgColor = palette.getVibrantColor(R.color.white);
                             viewHolder.songInfo.setBackgroundColor(bgColor);
@@ -228,7 +240,7 @@ public class DownloadFragment extends Fragment {
             viewHolder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MusicDownloader.startDownload(getActivity(), finalSongName + " " + finalArtistName, finalSongName, new MusicDownloader.DownloaderListener() {
+                    MusicDownloader.startDownload(getActivity(), finalSongName, finalArtistName, new MusicDownloader.DownloaderListener() {
                         @Override
                         public void showProgressBar() {
                             mProgress.setVisibility(View.VISIBLE);
@@ -253,8 +265,12 @@ public class DownloadFragment extends Fragment {
                 @Override
                 public boolean onLongClick(View view) {
                     mProgress.setVisibility(View.VISIBLE);
-                    String url = "http://rhythmsa.ga/api/sharable.php?q=";
-                    url = url + finalSongName.replace(" ", "+") + "+" + finalArtistName.replace(" ", "+");
+                    String url = null;
+                    try {
+                        url = "http://rhythmsa.ga/api/sharable.php?q=" + URLEncoder.encode(finalSongName + " " + finalArtistName, "utf-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     StringRequest request = new StringRequest(Request.Method.GET,
                             url, new Response.Listener<String>() {
                         @Override

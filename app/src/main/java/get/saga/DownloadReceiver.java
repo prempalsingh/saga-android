@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -17,6 +16,7 @@ import com.android.volley.toolbox.ImageRequest;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagOptionSingleton;
@@ -56,7 +56,8 @@ public class DownloadReceiver extends BroadcastReceiver {
                 Log.d("Receiver", "Title:" + title);
                 if (title.equalsIgnoreCase(context.getString(R.string.app_name) + " " + context.getString(R.string.update))) {
                     Intent install = new Intent(Intent.ACTION_VIEW);
-                    install.setDataAndType(Uri.fromFile(new File(Utils.getStoragePath(context) + "/" + "update.apk")), "application/vnd.android.package-archive");
+                    install.setDataAndType(Uri.parse(c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))),
+                            "application/vnd.android.package-archive");
                     install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(install);
                 } else {
@@ -65,75 +66,78 @@ public class DownloadReceiver extends BroadcastReceiver {
                         final File file = new File(Utils.getStoragePath(context) + "/" + title);
                         final AudioFile f = AudioFileIO.read(file);
                         final Tag tag = f.getTag();
-                        String url = "http://ts3.mm.bing.net/th?q=" + title.substring(0, title.length() - 4).replace(" ", "%20") + "+album+art";
-                        ImageRequest request = new ImageRequest(url,
-                                new Response.Listener<Bitmap>() {
-                                    @Override
-                                    public void onResponse(Bitmap bitmap) {
-                                        FileOutputStream out = null;
-                                        try {
-                                            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                                            String imageFileName = "JPEG_" + timeStamp + "_";
-                                            File storageDir = Environment.getExternalStorageDirectory();
-                                            File cover = File.createTempFile(
-                                                    imageFileName, /* prefix */
-                                                    ".jpg", /* suffix */
-                                                    storageDir /* directory */
-                                            );
-                                            out = new FileOutputStream(cover);
-                                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                                            AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
-                                            tag.setField(artwork);
-                                            String json = readFromFile(context, title);
-                                            if (json != null) {
-                                                JSONObject jsonObject = new JSONObject(json);
-                                                if (jsonObject.getString("track") != null)
-                                                    tag.setField(FieldKey.TITLE, jsonObject.getString("track"));
-                                                if (jsonObject.getString("artist") != null)
-                                                    tag.setField(FieldKey.ARTIST, jsonObject.getString("artist"));
-                                                if (jsonObject.getString("artist") != null)
-                                                    tag.setField(FieldKey.ALBUM_ARTIST, jsonObject.getString("artist"));
-                                                if (jsonObject.getString("release") != null)
-                                                    tag.setField(FieldKey.YEAR, jsonObject.getString("release"));
-                                                if (jsonObject.getString("trackno") != null)
-                                                    tag.setField(FieldKey.TRACK, jsonObject.getString("trackno"));
-                                                if (jsonObject.getString("album") != null)
-                                                    tag.setField(FieldKey.ALBUM, jsonObject.getString("album"));
-                                                if (jsonObject.getString("genre") != null)
-                                                    tag.setField(FieldKey.GENRE, jsonObject.getString("genre"));
-                                                tag.setField(FieldKey.COMMENT, "Downloaded from Saga");
-                                            }
-                                            f.commit();
-                                            Log.d(TAG, "AlbumArt deleted " + cover.delete());
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                                Intent mediaScanIntent = new Intent(
-                                                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                                                Uri contentUri = Uri.fromFile(file);
-                                                mediaScanIntent.setData(contentUri);
-                                                context.sendBroadcast(mediaScanIntent);
-                                            } else {
-                                                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Utils.getStoragePath(context))));
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        } finally {
+                        String json = readFromFile(context, title);
+                        String url = null;
+
+                        if (json != null) {
+                            JSONObject jsonObject = new JSONObject(json);
+                            if (jsonObject.getString("track") != null) {
+                                if (jsonObject.getString("artist") != null) {
+                                    url = Utils.getAlbumArt(jsonObject.getString("track"), jsonObject.getString("artist"));
+                                } else {
+                                    url = Utils.getAlbumArt(jsonObject.getString("track"), null);
+                                }
+                            }
+                            if (jsonObject.getString("artist") != null)
+                                tag.setField(FieldKey.ARTIST, jsonObject.getString("artist"));
+                            if (jsonObject.getString("artist") != null)
+                                tag.setField(FieldKey.ALBUM_ARTIST, jsonObject.getString("artist"));
+                            if (jsonObject.getString("release") != null)
+                                tag.setField(FieldKey.YEAR, jsonObject.getString("release"));
+                            if (jsonObject.getString("trackno") != null)
+                                tag.setField(FieldKey.TRACK, jsonObject.getString("trackno"));
+                            if (jsonObject.getString("album") != null)
+                                tag.setField(FieldKey.ALBUM, jsonObject.getString("album"));
+                            if (jsonObject.getString("genre") != null)
+                                tag.setField(FieldKey.GENRE, jsonObject.getString("genre"));
+                            tag.setField(FieldKey.COMMENT, "Downloaded from Saga");
+                        } else {
+                            url = Utils.getAlbumArt(title.substring(0, title.length() - 4), null);
+                        }
+                        if (url != null) {
+                            ImageRequest request = new ImageRequest(url,
+                                    new Response.Listener<Bitmap>() {
+                                        @Override
+                                        public void onResponse(Bitmap bitmap) {
+                                            FileOutputStream out = null;
                                             try {
-                                                if (out != null) {
-                                                    out.close();
-                                                }
-                                            } catch (IOException e) {
+                                                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                                                String imageFileName = "JPEG_" + timeStamp + "_";
+                                                File storageDir = context.getCacheDir();
+                                                File cover = File.createTempFile(
+                                                        imageFileName, /* prefix */
+                                                        ".jpg", /* suffix */
+                                                        storageDir /* directory */
+                                                );
+                                                out = new FileOutputStream(cover);
+                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                                AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
+                                                tag.setField(artwork);
+                                                Log.d(TAG, "AlbumArt deleted " + cover.delete());
+                                            } catch (Exception e) {
                                                 e.printStackTrace();
+                                            } finally {
+                                                commitAudio(context, f, file);
+                                                try {
+                                                    if (out != null) {
+                                                        out.close();
+                                                    }
+                                                } catch (IOException e) {
+                                                    e.printStackTrace();
+                                                }
                                             }
                                         }
-                                    }
-                                }, 0, 0, null,
-                                new Response.ErrorListener() {
-                                    public void onErrorResponse(VolleyError error) {
-                                        error.printStackTrace();
-                                    }
-                                });
-                        request.setShouldCache(false);
-                        VolleySingleton.getInstance(context).addToRequestQueue(request);
+                                    }, 0, 0, null,
+                                    new Response.ErrorListener() {
+                                        public void onErrorResponse(VolleyError error) {
+                                            error.printStackTrace();
+                                            commitAudio(context, f, file);
+                                        }
+                                    });
+                            request.setShouldCache(false);
+                            VolleySingleton.getInstance(context).addToRequestQueue(request);
+                        }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -145,7 +149,7 @@ public class DownloadReceiver extends BroadcastReceiver {
     private String readFromFile(Context context, String filename) {
 
         String ret = null;
-        String file = filename.substring(0, filename.length() - 3) + "txt";
+        String file = filename.substring(0, filename.length() - 4);
 
         try {
             InputStream inputStream = context.openFileInput(file);
@@ -173,5 +177,22 @@ public class DownloadReceiver extends BroadcastReceiver {
         }
 
         return ret;
+    }
+
+    private void commitAudio(Context context, AudioFile f, File file) {
+        try {
+            f.commit();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Intent mediaScanIntent = new Intent(
+                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(file);
+                mediaScanIntent.setData(contentUri);
+                context.sendBroadcast(mediaScanIntent);
+            } else {
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Utils.getStoragePath(context))));
+            }
+        } catch (CannotWriteException e) {
+            e.printStackTrace();
+        }
     }
 }

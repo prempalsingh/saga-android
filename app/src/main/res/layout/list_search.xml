@@ -10,7 +10,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="2dp">
+        android:padding="2dp"
+        android:background="?selectableItemBackgroundBorderless">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/search_album_art"
@@ -41,7 +42,7 @@
                 android:singleLine="true"
                 android:text="Song Name"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/search_artist"
@@ -53,7 +54,7 @@
                 android:singleLine="true"
                 android:text="Artist Name"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 

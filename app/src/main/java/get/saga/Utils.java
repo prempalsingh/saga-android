@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by prempal on 21/2/15.
@@ -28,11 +29,7 @@ public class Utils {
 
     public static boolean isColorDark(int color) {
         double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
-        if (darkness < 0.5) {
-            return false; // It's a light color
-        } else {
-            return true; // It's a dark color
-        }
+        return darkness >= 0.5;
     }
 
     public static void viewURL(Context context, String url) {
@@ -41,9 +38,14 @@ public class Utils {
         context.startActivity(i);
     }
 
-    public static String getAlbumArt(String song, String artist) {
+    public static String getAlbumArt(String song, String artist) throws UnsupportedEncodingException {
         String BASE_URL = "http://ts3.mm.bing.net/th?q=";
-        return BASE_URL + song.replace(" ", "%20") + "%20" + artist.replace(" ", "%20") + "+album+art";
+        String albumArtUrl = BASE_URL + song.replace(" ", "%20");
+        if (artist != null) {
+            albumArtUrl += "%20" + artist.replace(" ", "%20");
+        }
+        albumArtUrl += "+album+art";
+        return albumArtUrl;
     }
 
     public static String getStoragePath(Context context) {
@@ -54,7 +56,7 @@ public class Utils {
 
     public static void saveSongInfo(Context context, String filename, String content) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(content);
             outputStreamWriter.close();
             Log.d("File:", "saved");

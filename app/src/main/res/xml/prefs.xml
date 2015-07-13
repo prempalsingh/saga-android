@@ -25,13 +25,15 @@
 
         <Preference
             android:key="prefTOS"
-            android:title="@string/pref_TOS"
-            android:summary="@string/checkout"/>
+            android:title="@string/pref_TOS"/>
 
         <Preference
             android:key="prefPrivacy"
-            android:title="@string/pref_privacy_policy"
-            android:summary="@string/checkout"/>
+            android:title="@string/pref_privacy_policy"/>
+
+        <Preference
+            android:key="prefAboutApp"
+            android:title="@string/pref_about"/>
 
         <Preference
             android:key="prefFacebook"
@@ -39,8 +41,17 @@
             android:summary="@string/follow_facebook"/>
 
         <Preference
+            android:key="prefGooglePlus"
+            android:title="@string/pref_google"
+            android:summary="@string/follow_google" />
+
+        <Preference
             android:key="prefAppVersion"
             android:title="@string/pref_app_version"/>
+
+        <Preference
+            android:key="prefMadeWithLove"
+            android:title="@string/made_with_love" />
 
     </PreferenceCategory>
 

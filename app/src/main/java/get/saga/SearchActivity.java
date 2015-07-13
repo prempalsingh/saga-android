@@ -34,11 +34,10 @@ import com.google.android.gms.analytics.Tracker;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import get.saga.ui.DividerItemDecoration;
 
 
 public class SearchActivity extends AppCompatActivity {
@@ -66,7 +65,7 @@ public class SearchActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.search_results);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
 
         mQueue = VolleySingleton.getInstance(this).getRequestQueue();
         mImageLoader = VolleySingleton.getInstance(this).getImageLoader();
@@ -128,18 +127,21 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void getSearchResults(final String query) {
-        String url = "http://sagamusic.herokuapp.com/search.php";
-        StringRequest request = new StringRequest(Request.Method.POST,
+        String url = "http://www.shazam.com/fragment/search/" + query.replace(" ", "%20") + ".json?size=medium";
+        StringRequest request = new StringRequest(Request.Method.GET,
                 url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, response);
                 try {
-                    mAdapter = new SearchAdapter(new JSONArray(response));
+                    mAdapter = new SearchAdapter(new JSONObject(response).getJSONArray("tracks"));
+                    mRecyclerView.setAdapter(mAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "No results found", Toast.LENGTH_SHORT).show();
+                    mSearchProgress.setVisibility(View.GONE);
+                    mClearButton.setVisibility(View.VISIBLE);
                 }
-                mRecyclerView.setAdapter(mAdapter);
                 mSearchProgress.setVisibility(View.GONE);
                 mClearButton.setVisibility(View.VISIBLE);
             }
@@ -184,9 +186,9 @@ public class SearchActivity extends AppCompatActivity {
             String artistName = "unknown";
             String albumartUrl = "unknown";
             try {
-                songName = mDataset.getJSONObject(i).getString("track");
-                artistName = mDataset.getJSONObject(i).getString("artist");
-                albumartUrl = mDataset.getJSONObject(i).getString("art");
+                songName = mDataset.getJSONObject(i).getString("trackName");
+                artistName = mDataset.getJSONObject(i).getString("description");
+                albumartUrl = mDataset.getJSONObject(i).getString("image400");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -201,7 +203,7 @@ public class SearchActivity extends AppCompatActivity {
             viewHolder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MusicDownloader.startDownload(getApplicationContext(), finalSongName + " " + finalArtistName, finalSongName, new MusicDownloader.DownloaderListener() {
+                    MusicDownloader.startDownload(getApplicationContext(), finalSongName, finalArtistName, new MusicDownloader.DownloaderListener() {
                         @Override
                         public void showProgressBar() {
                             mDownloadProgress.setVisibility(View.VISIBLE);
