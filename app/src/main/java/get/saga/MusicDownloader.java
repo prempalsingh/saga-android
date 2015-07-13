@@ -25,12 +25,6 @@ import java.util.Map;
  */
 public class MusicDownloader {
 
-    interface DownloaderListener {
-        void showProgressBar();
-        void hideProgressBar();
-        void onSuccess();
-    }
-
     public static void startDownload(final Context context, final String songName, final String artistName, final DownloaderListener listener) {
         listener.showProgressBar();
         String url = "http://getsa.ga/request.php";
@@ -45,12 +39,12 @@ public class MusicDownloader {
                     DownloadManager dMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
                     DownloadManager.Request dr = new DownloadManager.Request(uri);
                     String fileName = songName;
-                    if(fileName == null){
+                    if (fileName == null) {
                         fileName = uri.getQueryParameter("mp3").replace("_", " ");
                         fileName = fileName.replaceAll("(?i)\\b(official|lyrics|lyric|video|song)\\b", "");
-                        fileName= fileName.trim().replaceAll(" +", " ");
+                        fileName = fileName.trim().replaceAll(" +", " ");
                         dr.setTitle(fileName);
-                    }else{
+                    } else {
                         fileName = fileName + ".mp3";
                     }
                     dr.setTitle(fileName);
@@ -75,7 +69,7 @@ public class MusicDownloader {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 String query = null;
-                if(artistName!=null)
+                if (artistName != null)
                     query = songName + " " + artistName;
                 else
                     query = songName;
@@ -94,7 +88,7 @@ public class MusicDownloader {
 
             @Override
             public void onResponse(String response) {
-                if(artistName != null){
+                if (artistName != null) {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         jsonObject.put("artist", artistName);
@@ -115,6 +109,14 @@ public class MusicDownloader {
         });
         request.setShouldCache(false);
         VolleySingleton.getInstance(context).getRequestQueue().add(request);
+    }
+
+    interface DownloaderListener {
+        void showProgressBar();
+
+        void hideProgressBar();
+
+        void onSuccess();
     }
 
 }

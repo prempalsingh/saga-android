@@ -24,11 +24,11 @@ import java.io.File;
  */
 public class Updater {
 
-    public static void checkForUpdates(final Context context,boolean visibility){
+    public static void checkForUpdates(final Context context, boolean visibility) {
         final int versionCode = getVersionCode(context);
         final ProgressDialog progressDialog = new ProgressDialog(context);
         String updateUrl = "https://www.dropbox.com/s/bka9o3p43oki217/saga.json?raw=1";
-        if(visibility){
+        if (visibility) {
             progressDialog.setTitle(context.getString(R.string.update));
             progressDialog.setMessage(context.getString(R.string.update_checking));
             progressDialog.setCancelable(true);
@@ -40,7 +40,7 @@ public class Updater {
                 try {
                     int updateVersionCode = response.getInt("versionCode");
                     if (updateVersionCode > versionCode && versionCode != 0) {
-                        if(progressDialog.isShowing()){
+                        if (progressDialog.isShowing()) {
                             progressDialog.cancel();
                         }
                         final String apkUrl = response.getString("apkUrl");
@@ -51,7 +51,7 @@ public class Updater {
                                 .setPositiveButton(context.getString(R.string.update_now), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        File myFile = new File(Utils.getStoragePath(context),"update.apk");
+                                        File myFile = new File(Utils.getStoragePath(context), "update.apk");
                                         if (myFile.exists())
                                             myFile.delete();
                                         Uri uri = Uri.parse(apkUrl);
@@ -72,11 +72,10 @@ public class Updater {
                                 .setCancelable(false)
                                 .create();
                         dialog.show();
-                    }
-                    else{
-                        if(progressDialog.isShowing()){
+                    } else {
+                        if (progressDialog.isShowing()) {
                             progressDialog.cancel();
-                            Toast.makeText(context,context.getString(R.string.no_update),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.no_update), Toast.LENGTH_SHORT).show();
                         }
                     }
                 } catch (JSONException e) {
@@ -86,7 +85,7 @@ public class Updater {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(progressDialog.isShowing()){
+                if (progressDialog.isShowing()) {
                     progressDialog.cancel();
                     Toast.makeText(context, context.getString(R.string.error_connect), Toast.LENGTH_SHORT).show();
                 }
@@ -96,7 +95,7 @@ public class Updater {
         VolleySingleton.getInstance(context).getRequestQueue().add(request);
     }
 
-    public static int getVersionCode(Context context){
+    public static int getVersionCode(Context context) {
         int versionCode = 0;
         try {
             versionCode = context.getPackageManager()

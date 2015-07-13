@@ -85,7 +85,7 @@ public class DownloadReceiver extends BroadcastReceiver {
                                             AndroidArtwork artwork = AndroidArtwork.createArtworkFromFile(cover);
                                             tag.setField(artwork);
                                             String json = readFromFile(context, title);
-                                            if(json != null) {
+                                            if (json != null) {
                                                 JSONObject jsonObject = new JSONObject(json);
                                                 if (jsonObject.getString("track") != null)
                                                     tag.setField(FieldKey.TITLE, jsonObject.getString("track"));

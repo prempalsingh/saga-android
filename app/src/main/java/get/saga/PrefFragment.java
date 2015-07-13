@@ -61,9 +61,9 @@ public class PrefFragment extends PreferenceFragment implements Preference.OnPre
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        if(preference == update){
-            Updater.checkForUpdates(getActivity(),true);
-        } else if(preference == storagePath) {
+        if (preference == update) {
+            Updater.checkForUpdates(getActivity(), true);
+        } else if (preference == storagePath) {
             Intent i = new Intent(context, FilePickerActivity.class);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
             i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);

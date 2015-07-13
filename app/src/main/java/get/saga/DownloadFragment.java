@@ -75,8 +75,12 @@ public class DownloadFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_download, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.grid_view);
+        return inflater.inflate(R.layout.fragment_download, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.grid_view);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
             mRecyclerView.setLayoutManager(layoutManager);
@@ -85,8 +89,8 @@ public class DownloadFragment extends Fragment {
             mRecyclerView.setLayoutManager(layoutManager);
         }
 
-        mProgress = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        mInput = (EditText) rootView.findViewById(R.id.et_input);
+        mProgress = (ProgressBar) view.findViewById(R.id.progressBar);
+        mInput = (EditText) view.findViewById(R.id.et_input);
         mInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -97,7 +101,7 @@ public class DownloadFragment extends Fragment {
                 return false;
             }
         });
-        ImageButton downloadBtn = (ImageButton) rootView.findViewById(R.id.btn_download);
+        ImageButton downloadBtn = (ImageButton) view.findViewById(R.id.btn_download);
         downloadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,7 +112,6 @@ public class DownloadFragment extends Fragment {
         getCharts();
 
         Updater.checkForUpdates(getActivity(), false);
-        return rootView;
     }
 
     private void getCharts() {

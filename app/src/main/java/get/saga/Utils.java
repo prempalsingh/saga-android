@@ -46,14 +46,13 @@ public class Utils {
         return BASE_URL + song.replace(" ", "%20") + "%20" + artist.replace(" ", "%20") + "+album+art";
     }
 
-    public static String getStoragePath(Context context){
+    public static String getStoragePath(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        String storage = sp.getString("prefStoragePath",
+        return sp.getString("prefStoragePath",
                 Environment.getExternalStorageDirectory() + "/Saga");
-        return storage;
     }
 
-    public static void saveSongInfo(Context context, String filename, String content){
+    public static void saveSongInfo(Context context, String filename, String content) {
         try {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename + ".txt", Context.MODE_PRIVATE));
             outputStreamWriter.write(content);
