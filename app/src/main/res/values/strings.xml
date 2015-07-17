@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Saga Music</string>
+    <string name="app_name">Saga</string>
     <string name="action_feedback">Feedback</string>
     <string name="action_invite">Invite Friends</string>
     <string name="action_settings">Settings</string>
@@ -20,7 +20,7 @@
 
     <string name="placeholder_library">You haven\'t downloaded any song yet!</string>
 
-    <string name="welcome">Welcome to Saga Music</string>
+    <string name="welcome">Welcome to Saga</string>
     <string name="welcome_text">Before we begin, here is some important legal information regarding your use of this app. This will only take a minute!</string>
     <string name="eula">Your use of this app is governed by:\n\na) Saga Terms of Service (http://sagaone.com/terms)\nb) Saga\'s Privacy Policy (http://sagaone.com/privacy)\n\nSaga\'s terms of service and privacy policies may be updated from time to time and without notice.</string>
     <string name="accept">ACCEPT</string>
@@ -39,7 +39,7 @@
     <string name="follow_facebook">Follow us on Facebook</string>
     <string name="pref_google">Google+</string>
     <string name="follow_google">Join our community</string>
-    <string name="pref_about">About Saga Music</string>
+    <string name="pref_about">About Saga</string>
     <string name="made_with_love">Made with ♥ in India</string>
 
     <string name="hello_world">Hello world!</string>
