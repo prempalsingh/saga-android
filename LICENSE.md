@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2015 Prempal Singh
+Copyright (c) 2015 Saga Team hello@sagaone.com
+More information on the team available at http://sagaone.com/about
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
