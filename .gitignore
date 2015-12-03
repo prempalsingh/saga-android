@@ -1,6 +1,12 @@
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
 .DS_Store
 /build
+.idea
+.DS_Store
+/captures
+out
+prebuilts
+*.iml
+*.apk
+*.txt
