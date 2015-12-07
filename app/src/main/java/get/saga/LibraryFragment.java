@@ -19,10 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import get.saga.ui.DividerItemDecoration;
 
 /**
@@ -74,6 +72,8 @@ public class LibraryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+
         View rootView = inflater.inflate(R.layout.fragment_library, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -85,9 +85,7 @@ public class LibraryFragment extends Fragment {
         refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                songList.clear();
-                getSongList();
-                mRecyclerView.getAdapter().notifyDataSetChanged();
+                repopulateList();
                 refresh.setRefreshing(false);
             }
         });
@@ -140,6 +138,7 @@ public class LibraryFragment extends Fragment {
         musicSrv = null;
         super.onDestroy();
     }
+
 
     public class SongInfo {
 
@@ -200,5 +199,16 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            repopulateList();
+    }
 
+    private void repopulateList(){
+        songList.clear();
+        getSongList();
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+    }
 }
