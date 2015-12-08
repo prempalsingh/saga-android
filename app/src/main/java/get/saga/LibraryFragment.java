@@ -35,6 +35,7 @@ public class LibraryFragment extends Fragment {
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
+    public static boolean newSongAdded = false;
     //connect to the service
     private ServiceConnection musicConnection = new ServiceConnection() {
 
@@ -202,10 +203,11 @@ public class LibraryFragment extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
+        if(isVisibleToUser && newSongAdded){
             repopulateList();
+            newSongAdded = false;
+        }
     }
-
     private void repopulateList(){
         songList.clear();
         getSongList();

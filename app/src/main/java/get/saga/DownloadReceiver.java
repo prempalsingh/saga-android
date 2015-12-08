@@ -41,7 +41,6 @@ public class DownloadReceiver extends BroadcastReceiver {
     private final String TAG = "Receiver";
 
     public DownloadReceiver() {
-
     }
 
     @Override
@@ -52,6 +51,8 @@ public class DownloadReceiver extends BroadcastReceiver {
         if (c.moveToFirst()) {
             int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                //notify Library that new song has been downloaded
+                LibraryFragment.newSongAdded = true;
                 final String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
                 Log.d("Receiver", "Title:" + title);
                 if (title.equalsIgnoreCase(context.getString(R.string.app_name) + " " + context.getString(R.string.update))) {
@@ -137,7 +138,6 @@ public class DownloadReceiver extends BroadcastReceiver {
                             request.setShouldCache(false);
                             VolleySingleton.getInstance(context).addToRequestQueue(request);
                         }
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -194,5 +194,6 @@ public class DownloadReceiver extends BroadcastReceiver {
         } catch (CannotWriteException e) {
             e.printStackTrace();
         }
+
     }
 }
