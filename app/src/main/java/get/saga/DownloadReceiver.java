@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -41,19 +42,23 @@ public class DownloadReceiver extends BroadcastReceiver {
     private final String TAG = "Receiver";
 
     public DownloadReceiver() {
+
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
+
+
         DownloadManager dMgr = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Long downloadId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
         Cursor c = dMgr.query(new DownloadManager.Query().setFilterById(downloadId));
         if (c.moveToFirst()) {
             int status = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                //notify Library that new song has been downloaded
-                LibraryFragment.newSongAdded = true;
                 final String title = c.getString(c.getColumnIndex(DownloadManager.COLUMN_TITLE));
+                //Launch Download Complete Intent
+                LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
                 Log.d("Receiver", "Title:" + title);
                 if (title.equalsIgnoreCase(context.getString(R.string.app_name) + " " + context.getString(R.string.update))) {
                     Intent install = new Intent(Intent.ACTION_VIEW);
@@ -138,6 +143,7 @@ public class DownloadReceiver extends BroadcastReceiver {
                             request.setShouldCache(false);
                             VolleySingleton.getInstance(context).addToRequestQueue(request);
                         }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -194,6 +200,6 @@ public class DownloadReceiver extends BroadcastReceiver {
         } catch (CannotWriteException e) {
             e.printStackTrace();
         }
-
     }
+
 }

@@ -1,9 +1,12 @@
 package get.saga;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,16 +14,20 @@ import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import get.saga.ui.DividerItemDecoration;
 
 /**
@@ -35,7 +42,13 @@ public class LibraryFragment extends Fragment {
     private MusicService musicSrv;
     private Intent playIntent;
     private boolean musicBound = false;
-    public static boolean newSongAdded = false;
+
+    private BroadcastReceiver onNewDownload = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            repopulateList();
+        }
+    };
     //connect to the service
     private ServiceConnection musicConnection = new ServiceConnection() {
 
@@ -73,8 +86,6 @@ public class LibraryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-
         View rootView = inflater.inflate(R.layout.fragment_library, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -140,7 +151,6 @@ public class LibraryFragment extends Fragment {
         super.onDestroy();
     }
 
-
     public class SongInfo {
 
         private String mTitle;
@@ -200,13 +210,18 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+
     @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser && newSongAdded){
-            repopulateList();
-            newSongAdded = false;
-        }
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(onNewDownload,
+                new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    @Override
+    public void onPause() {
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(onNewDownload);
+        super.onPause();
     }
     private void repopulateList(){
         songList.clear();
