@@ -24,7 +24,7 @@ import java.io.File;
 import get.saga.ui.SlidingTabLayout;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CallDialog{
 
     Toolbar mToolbar;
 
@@ -141,6 +141,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void callDialog(String url, String songName, String songArtist) {
+        OnClickDialog mOnClick=OnClickDialog.getInstance(url,songArtist,songName);
+        mOnClick.show(getSupportFragmentManager(),"Call_Dialog");
     }
 
     public class ViewPagerAdapter extends FragmentStatePagerAdapter {
