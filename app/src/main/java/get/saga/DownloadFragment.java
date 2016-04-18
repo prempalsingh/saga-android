@@ -1,5 +1,6 @@
 package get.saga;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -12,8 +13,6 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -34,7 +32,6 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
@@ -42,7 +39,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * Created by prempal on 16/2/15.
@@ -200,10 +196,8 @@ public class DownloadFragment extends Fragment {
                 e.printStackTrace();
             }
             viewHolder.songName.setText(songName);
-            viewHolder.songName.setSelected(true);
             viewHolder.artistName.setText(artistName);
-            viewHolder.artistName.setSelected(true);
-            String url = null;
+            String url=null;
             try {
                 url = Utils.getAlbumArt(songName, artistName);
             } catch (UnsupportedEncodingException e) {
@@ -237,74 +231,12 @@ public class DownloadFragment extends Fragment {
             });
             final String finalSongName = songName;
             final String finalArtistName = artistName;
+            final String finalUrl=url;
+            final Context mContext=getActivity();
             viewHolder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MusicDownloader.startDownload(getActivity(), finalSongName, finalArtistName, new MusicDownloader.DownloaderListener() {
-                        @Override
-                        public void showProgressBar() {
-                            mProgress.setVisibility(View.VISIBLE);
-                        }
-
-                        @Override
-                        public void hideProgressBar() {
-                            mProgress.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onSuccess() {
-                            mTracker.send(new HitBuilders.EventBuilder()
-                                    .setCategory("Music Download")
-                                    .setAction("Click")
-                                    .build());
-                        }
-                    });
-                }
-            });
-            viewHolder.view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    mProgress.setVisibility(View.VISIBLE);
-                    String url = null;
-                    try {
-                        url = "http://rhythmsa.ga/api/sharable.php?q=" + URLEncoder.encode(finalSongName + " " + finalArtistName, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                    StringRequest request = new StringRequest(Request.Method.GET,
-                            url, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            mProgress.setVisibility(View.GONE);
-                            Log.d(TAG, response);
-                            if (Patterns.WEB_URL.matcher(response).matches()) {
-                                Intent i = new Intent(Intent.ACTION_SEND);
-                                i.setType("text/plain");
-                                i.putExtra(Intent.EXTRA_TEXT, "Hey! Check out this amazing song - " + finalSongName + " by " + finalArtistName + ". " + response + "\nShared via Saga Music app - http://getsa.ga/apk");
-                                try {
-                                    startActivity(Intent.createChooser(i, "Share via"));
-                                } catch (android.content.ActivityNotFoundException ex) {
-                                    Toast.makeText(getActivity(), "No application available to share song", Toast.LENGTH_SHORT).show();
-                                }
-                                mTracker.send(new HitBuilders.EventBuilder()
-                                        .setCategory("Music Share")
-                                        .setAction("Click")
-                                        .build());
-                            } else
-                                Toast.makeText(getActivity(), "Error in sharing", Toast.LENGTH_SHORT).show();
-                        }
-                    }, new Response.ErrorListener() {
-
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            mProgress.setVisibility(View.GONE);
-                            VolleyLog.d(TAG, "Error: " + error.getMessage());
-                            Toast.makeText(getActivity(), "Error connecting to the Internet", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    request.setShouldCache(false);
-                    mQueue.add(request);
-                    return true;
+                    ((CallDialog)mContext).callDialog(finalUrl,finalSongName,finalArtistName);
                 }
             });
         }

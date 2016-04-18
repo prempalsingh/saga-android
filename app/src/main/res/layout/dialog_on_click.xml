@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/album_iv_doc"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/artist_tv_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/album_iv_doc"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="10dp"
+            android:text="Artist:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@+id/artist_value_tv_doc"
+            android:layout_marginTop="5dp"
+            android:background="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@+id/album_iv_doc"
+            android:background="@color/black" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_below="@+id/track_value_tv_doc"
+            android:background="@color/black" />
+
+        <TextView
+            android:id="@+id/track_tv_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/artist_value_tv_doc"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="10dp"
+            android:text="Track:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/track_show_tv_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/track_tv_doc"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:layout_toRightOf="@+id/artist_tv_doc"
+            android:id="@+id/artist_value_tv_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/artist_tv_doc"
+            android:text="Rahul Gandhi"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:layout_toRightOf="@+id/track_tv_doc"
+            android:layout_toEndOf="@+id/track_tv_doc"
+            android:id="@+id/track_value_tv_doc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/track_tv_doc"
+            android:layout_marginBottom="10dp"
+            android:text="Sonia ma momma"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageButton
+            android:id="@+id/download_btn_doc"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
+
+        <ImageButton
+            android:id="@+id/share_btn_doc"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/download_btn_doc"
+            android:layout_toStartOf="@+id/download_btn_doc" />
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_doc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+</FrameLayout>
